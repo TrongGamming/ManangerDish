@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using ManangerDish.Models;
+using ManagerDish.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManangerDish.Controllers

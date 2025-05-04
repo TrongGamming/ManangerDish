@@ -1,4 +1,4 @@
-namespace ManangerDish.Models
+namespace ManagerDish.Models
 {
     public class ErrorViewModel
     {
