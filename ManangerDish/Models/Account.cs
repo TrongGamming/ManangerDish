@@ -20,8 +20,7 @@ namespace ManagerDish.Models
         public string Email { get; set; } = "";
 
         [Required]
-        [StringLength(50)]
-        [DataType(DataType.Password)]
+        [DataType(DataType.Text)]
         public string Password { get; set; } = "";
 
         [Required]

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ManagerDish.Models;
+using ManagerDish.Models.Enum;
 
 namespace ManagerDish.Data
 {
@@ -23,7 +24,30 @@ namespace ManagerDish.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            #region Role
+
+            modelBuilder.Entity<Role>().HasData(
+                new Role{ Id = RoleEnum.Admin, RoleName = "Admin", RoleDescription = "Admin"},
+                new Role{ Id = RoleEnum.Manager, RoleName = "Manager", RoleDescription = "Manager"},
+                new Role{ Id = RoleEnum.Kitchen, RoleName = "Kitchen", RoleDescription = "Kitchen"},
+                new Role{ Id = RoleEnum.Staff, RoleName = "Staff", RoleDescription = "Staff"},
+                new Role{ Id = RoleEnum.Guest, RoleName = "Guest", RoleDescription = "Guest"}
+            );
+
+            #endregion
+
+            #region Account
+            modelBuilder.Entity<Account>().HasData(new Account
+            { 
+                Id = 1,
+                Name = "Admin",
+                Email = "tronghahu@gmail.com",
+                Password = BCrypt.Net.BCrypt.HashPassword("trong123"),
+                Avatar = "",
+                roleId = RoleEnum.Admin,
+            });
+            #endregion
+
         }
     }
 }

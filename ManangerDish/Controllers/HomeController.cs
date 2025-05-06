@@ -1,5 +1,8 @@
 ﻿using System.Diagnostics;
+using System.Linq;
+using System.Security.Claims;
 using ManagerDish.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManangerDish.Controllers
@@ -15,9 +18,12 @@ namespace ManangerDish.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.Name = User.Identity.Name;
+            ViewBag.RoleName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+
             return View();
         }
-
+        [Authorize]
         public IActionResult Privacy()
         {
             return View();

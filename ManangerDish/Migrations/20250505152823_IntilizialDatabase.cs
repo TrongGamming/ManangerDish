@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ManagerDish.Migrations
 {
-    public partial class initilizal : Migration
+    public partial class IntilizialDatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -89,7 +89,7 @@ namespace ManagerDish.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Avatar = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     roleId = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<int>(type: "int", nullable: true),
@@ -273,6 +273,23 @@ namespace ManagerDish.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "Id", "RoleDescription", "RoleName" },
+                values: new object[,]
+                {
+                    { 1, "Admin", "Admin" },
+                    { 2, "Manager", "Manager" },
+                    { 3, "Kitchen", "Kitchen" },
+                    { 4, "Staff", "Staff" },
+                    { 5, "Guest", "Guest" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Accounts",
+                columns: new[] { "Id", "Avatar", "CreatedAt", "CreatedBy", "Email", "Name", "Password", "UpdatedAt", "isActive", "roleId" },
+                values: new object[] { 1, "", new DateTime(2025, 5, 5, 22, 28, 22, 820, DateTimeKind.Local).AddTicks(418), null, "tronghahu@gmail.com", "Admin", "$2a$11$AlbPhjLJKJTEwpWxBmZPtOkHHsKFn2tZCt1sDreDwxYaS0LknhZuW", new DateTime(2025, 5, 5, 22, 28, 22, 820, DateTimeKind.Local).AddTicks(429), true, 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Accounts_CreatedBy",

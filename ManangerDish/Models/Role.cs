@@ -21,7 +21,7 @@ namespace ManagerDish.Models
         public string RoleDescription { get; set; } = "";
 
 
-        public IEnumerable<Account>? Accounts { get; set; } = new List<Account>();
+        public virtual IEnumerable<Account>? Accounts { get; set; } = new List<Account>();
 
     }
 }

@@ -19,5 +19,8 @@ namespace ManagerDish.Models
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        [Required]
+        public string AccessToken { get; set; } = "";
     }
 }

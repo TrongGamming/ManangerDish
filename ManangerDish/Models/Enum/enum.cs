@@ -3,8 +3,10 @@
     public enum RoleEnum
     {
         Admin = 1,
-        User = 2,
-        Guest = 3
+        Manager = 2,
+        Kitchen = 3,
+        Staff = 4,
+        Guest = 5
     }
 
     public enum PaymentMethod

@@ -4,6 +4,7 @@ using ManagerDish.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ManagerDish.Migrations
 {
     [DbContext(typeof(ManagerDBContext))]
-    partial class ManagerDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250505152823_IntilizialDatabase")]
+    partial class IntilizialDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,11 +78,11 @@ namespace ManagerDish.Migrations
                         {
                             Id = 1,
                             Avatar = "",
-                            CreatedAt = new DateTime(2025, 5, 5, 23, 3, 46, 932, DateTimeKind.Local).AddTicks(5052),
+                            CreatedAt = new DateTime(2025, 5, 5, 22, 28, 22, 820, DateTimeKind.Local).AddTicks(418),
                             Email = "tronghahu@gmail.com",
                             Name = "Admin",
-                            Password = "$2a$11$jDjU.UP3GmBihA8wqmMuoeJEmv/cUvAqMx2Ig50IuvxXOCrm4qV/.",
-                            UpdatedAt = new DateTime(2025, 5, 5, 23, 3, 46, 932, DateTimeKind.Local).AddTicks(5065),
+                            Password = "$2a$11$AlbPhjLJKJTEwpWxBmZPtOkHHsKFn2tZCt1sDreDwxYaS0LknhZuW",
+                            UpdatedAt = new DateTime(2025, 5, 5, 22, 28, 22, 820, DateTimeKind.Local).AddTicks(429),
                             isActive = true,
                             roleId = 1
                         });
@@ -336,10 +338,6 @@ namespace ManagerDish.Migrations
                 {
                     b.Property<string>("Token")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("AccessToken")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("AccountId")
                         .HasColumnType("int");

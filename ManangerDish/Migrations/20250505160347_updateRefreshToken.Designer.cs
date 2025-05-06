@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ManagerDish.Migrations
 {
     [DbContext(typeof(ManagerDBContext))]
-    [Migration("20250504170615_initilizal")]
-    partial class initilizal
+    [Migration("20250505160347_updateRefreshToken")]
+    partial class updateRefreshToken
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -54,8 +54,7 @@ namespace ManagerDish.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -73,6 +72,20 @@ namespace ManagerDish.Migrations
                     b.HasIndex("roleId");
 
                     b.ToTable("Accounts");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Avatar = "",
+                            CreatedAt = new DateTime(2025, 5, 5, 23, 3, 46, 932, DateTimeKind.Local).AddTicks(5052),
+                            Email = "tronghahu@gmail.com",
+                            Name = "Admin",
+                            Password = "$2a$11$jDjU.UP3GmBihA8wqmMuoeJEmv/cUvAqMx2Ig50IuvxXOCrm4qV/.",
+                            UpdatedAt = new DateTime(2025, 5, 5, 23, 3, 46, 932, DateTimeKind.Local).AddTicks(5065),
+                            isActive = true,
+                            roleId = 1
+                        });
                 });
 
             modelBuilder.Entity("ManagerDish.Models.Category", b =>
@@ -326,6 +339,10 @@ namespace ManagerDish.Migrations
                     b.Property<string>("Token")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("AccessToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
 
@@ -363,6 +380,38 @@ namespace ManagerDish.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            RoleDescription = "Admin",
+                            RoleName = "Admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            RoleDescription = "Manager",
+                            RoleName = "Manager"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            RoleDescription = "Kitchen",
+                            RoleName = "Kitchen"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            RoleDescription = "Staff",
+                            RoleName = "Staff"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            RoleDescription = "Guest",
+                            RoleName = "Guest"
+                        });
                 });
 
             modelBuilder.Entity("ManagerDish.Models.Table", b =>
