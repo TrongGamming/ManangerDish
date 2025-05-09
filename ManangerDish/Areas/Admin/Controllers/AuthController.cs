@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
-namespace ManagerDish.Controllers
+namespace ManagerDish.Areas.Admin.Controllers
 {
-    [Route("Auth")]
+    [Area("Admin")]
     public class AuthController : Controller
     {
         private readonly AuthService _authService;
@@ -21,13 +21,14 @@ namespace ManagerDish.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet("login")]
+        [HttpGet]
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
         }
 
-        [HttpPost("login")]
+        [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginRequest model)
         {
@@ -49,10 +50,11 @@ namespace ManagerDish.Controllers
                 SameSite = SameSiteMode.None,
                 Secure = true
             });
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Home", new { area = "Guest" });
+
         }
 
-        [HttpPost("refresh")]
+        [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> RefreshToken()
         {
@@ -92,7 +94,7 @@ namespace ManagerDish.Controllers
             }
 
         }
-        [HttpGet("logout")]
+        [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> Logout()
         {
@@ -100,7 +102,7 @@ namespace ManagerDish.Controllers
             await _unitOfWork.RefreshToken.Remove(refreshToken);
             await _unitOfWork.Save();
             Response.Cookies.Delete("refreshToken");
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Home", new { area = "Guest" });
         }
 
     }

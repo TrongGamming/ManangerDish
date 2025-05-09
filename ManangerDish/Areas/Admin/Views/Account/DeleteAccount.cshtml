@@ -1,0 +1,88 @@
+﻿@model EditAccountRequest
+@{
+    ViewData["Title"] = "Create Account";
+    ViewData["Message"] = "Create Account";
+}
+
+<div class="container py-4">
+    <h1 class="mb-4">Delete Account</h1>
+
+    <div class="p-4 bg-light shadow-sm rounded">
+        <form asp-action="DeleteAccount" asp-controller="Account" asp-area="Admin" method="post" enctype="multipart/form-data" class="mt-2 py-4 border-top">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <input asp-for="Id" type="hidden" />
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="UserName" class="form-label">User Name</label>
+                    <input disabled asp-for="UserName" type="text" class="form-control" placeholder="Enter username" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Email" class="form-label">Email Address</label>
+                    <input disabled asp-for="Email" type="email" class="form-control" placeholder="name@example.com" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <input disabled asp-for="Password" type="password" class="form-control" placeholder="Enter password" />
+                        <span class="btn btn-outline-secondary" id="togglePassword">
+                            <i class="bi bi-eye"></i>
+                        </span>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                    <div class="input-group">
+                        <input disabled asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm password" />
+                        <span class="btn btn-outline-secondary" id="toggleConfirmPassword">
+                            <i class="bi bi-eye"></i>
+                        </span>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <label asp-for="Avatar" class="form-label">Profile Picture</label>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <img id="avatarPreview" src="/images/avartars/default-avatar.png" alt="Avatar Preview"
+                                     class="rounded-circle img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;" />
+                            </div>
+                            <div class="d-flex flex-column">
+                                <div class="custom-file">
+                                    <input disabled asp-for="Avatar" type="file" class="form-control custom-file-input" id="avatarUpload" accept="image/*" />
+                                    <span asp-validation-for="Avatar" class="text-danger"></span>
+                                </div>
+                                <small class="form-text text-muted mt-2">
+                                    Accepted formats: JPG, PNG, GIF. Max size: 5MB
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="RoleId" class="form-label">User Role</label>
+                    <select disabled asp-for="RoleId" class="form-select" asp-items="@Html.GetEnumSelectList<RoleEnum>()">
+                        <option value="">-- Select Role --</option>
+                    </select>
+                    <span asp-validation-for="RoleId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end mt-4">
+                <a asp-controller="Account" asp-action="Accounts" class="btn btn-secondary me-2">Cancel</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-floppy-fill"></i> Save Account
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

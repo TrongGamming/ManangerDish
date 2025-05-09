@@ -1,0 +1,235 @@
+﻿@model List<Dish>
+@{
+    ViewData["Title"] = "Dishes";
+    ViewData["Message"] = "Dishes";
+}
+<h1 class="my-4">Dish Management</h1>
+
+<div class="mb-4">
+    <button class="btn btn-outline-secondary w-100 mb-3 d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="false" aria-controls="filterCollapse">
+        <i class="bi bi-funnel-fill me-2"></i> Show Filter Options
+    </button>
+
+    <form method="get">
+        <div class="collapse d-md-block" id="filterCollapse">
+            <div class="p-4 bg-light shadow-sm mb-3">
+                <h5 class="mb-3 border-bottom pb-2">Filter Dishes</h5>
+                
+                <div class="row">
+                    <div class="col-12 col-md-6 col-lg-3 mb-3">
+                        <label for="PriceFrom" class="form-label">Price From</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-currency-dollar"></i></span>
+                            <input name="PriceFrom" id="PriceFrom" value="@ViewBag.PriceFrom" type="number" min="0" class="form-control" placeholder="Min Price" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3 mb-3">
+                        <label for="PriceTo" class="form-label">Price To</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-currency-dollar"></i></span>
+                            <input name="PriceTo" id="PriceTo" value="@ViewBag.PriceTo" type="number" min="0" class="form-control" placeholder="Max Price" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3 mb-3">
+                        <label for="CategoryId" class="form-label">Category</label>
+                        <select name="CategoryId" id="CategoryId" asp-items=@ViewBag.categorySelect class="form-select">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3 mb-3">
+                        <label for="Status" class="form-label">Status</label>
+                        <select name="Status" asp-items="@Html.GetEnumSelectList<DishStatus>()" id="Status" class="form-select">
+                            <option value="">All Statuses</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row mt-2">
+                    <div class="col-12 mb-3">
+                        <label for="searchInput" class="form-label">Search</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" id="searchInput" name="q" placeholder="Dish Name or Description" value="@ViewBag.Search">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-2">
+                    <div class="col-12 col-md-6 mb-3">
+                        <button class="btn btn-primary w-100" type="submit">
+                            <i class="bi bi-funnel-fill me-2"></i> Apply Filters
+                        </button>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <a href="@Url.Action("Dishes", "Dish")" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-x-circle me-2"></i> Clear Filters
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end mb-3">
+            <a class="btn btn-primary d-flex align-items-center justify-content-center" asp-controller="Dish" asp-action="CreateDish">
+                <i class="bi bi-plus-circle me-2"></i> Create New Dish
+            </a>
+        </div>
+    </form>
+</div>
+
+<div class="p-4 bg-light shadow-sm d-none d-md-block">
+    <div class="row fw-bold pb-2 border-bottom text-center">
+        <div class="col-1">#</div>
+        <div class="col-2">Name</div>
+        <div class="col-2">Image</div>
+        <div class="col-2">Price</div>
+        <div class="col-2">Category</div>
+        <div class="col-1">Status</div>
+        <div class="col-2">Actions</div>
+    </div>
+    @foreach (var item in Model)
+    {
+        <div class="row py-2 border-bottom text-center align-items-center">
+            <div class="col-1">@item.Id</div>
+            <div class="col-2">
+                <div>@item.Name</div>
+                <small class="text-muted">@(item.Description.Length > 25 ? item.Description.Substring(0, 25) + "..." : item.Description)</small>
+            </div>
+            <div class="col-2">
+                <img src="@item.Image" width="80" height="60" class="rounded" style="object-fit: cover" alt="@item.Name" />
+            </div>
+            <div class="col-2">@string.Format("{0:C0}", item.Price)</div>
+            <div class="col-2">@(item.Category?.Name ?? "Unknown")</div>
+            <div class="col-1">
+                @switch(item.Status)
+                {
+                    case DishStatus.Available:
+                        <span class="badge bg-success">Available</span>
+                        break;
+                    case DishStatus.Unavailable:
+                        <span class="badge bg-warning text-dark">Unavailable</span>
+                        break;
+                    case DishStatus.OutOfStock:
+                        <span class="badge bg-danger">Deleted</span>
+                        break;
+                }
+            </div>
+            <div class="col-2 d-flex justify-content-center gap-2">
+                <a href="@Url.Action("EditDish", "Dish", new { id = item.Id })" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+                <a href="@Url.Action("DetailsDish", "Dish", new { id = item.Id })" class="btn btn-sm btn-outline-info">
+                    <i class="bi bi-info-circle"></i>
+                </a>
+                <a href="@Url.Action("DeleteDish", "Dish", new { id = item.Id })" class="btn btn-sm btn-outline-danger">
+                    <i class="bi bi-trash"></i>
+                </a>
+            </div>
+        </div>
+    }
+    <div class="my-3">
+        <pagination page-model="@ViewBag.Model"></pagination>
+    </div>
+</div>
+
+<div class="d-md-none">
+    <div class="input-group mb-3 sticky-top bg-white pt-2 pb-2" style="top: 0; z-index: 1020;">
+        <input type="text" class="form-control" id="mobileQuickSearch" placeholder="Quick search..." 
+               onkeyup="filterMobileCards(this.value)">
+        <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" 
+                data-bs-target="#filterCollapse" aria-expanded="false">
+            <i class="bi bi-sliders"></i>
+        </button>
+    </div>
+
+    <!-- No Results Message -->
+    <div id="noResultsMessage" class="alert alert-info d-none">
+        No dishes match your search criteria
+    </div>
+
+    <div id="mobileCardContainer">
+        @foreach (var item in Model)
+        {
+            <div class="card mb-3 dish-card" data-name="@item.Name.ToLower()" data-desc="@item.Description.ToLower()" data-category="@(item.Category?.Name?.ToLower() ?? "unknown")">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">@item.Name</h5>
+                    <div>
+                        @switch(item.Status)
+                        {
+                            case DishStatus.Available:
+                                <span class="badge bg-success">Available</span>
+                                break;
+                            case DishStatus.Unavailable:
+                                <span class="badge bg-warning text-dark">Unavailable</span>
+                                break;
+                            case DishStatus.OutOfStock:
+                                <span class="badge bg-danger">Deleted</span>
+                                break;
+                        }
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-5">
+                            <img src="@item.Image" class="img-fluid rounded" alt="@item.Name" style="width: 100%; height: 100px; object-fit: cover;">
+                        </div>
+                        <div class="col-7">
+                            <p class="text-muted small mb-2">@item.Description</p>
+                            <p class="fw-bold mb-1">Price: @string.Format("{0:C0}", item.Price)</p>
+                            <p class="mb-0"><span class="badge bg-secondary">@(item.Category?.Name ?? "Unknown")</span></p>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-3">
+                        <a href="@Url.Action("DetailsDish", "Dish", new { id = item.Id })" class="btn btn-sm btn-outline-info">
+                            <i class="bi bi-info-circle"></i> Details
+                        </a>
+                        <a href="@Url.Action("EditDish", "Dish", new { id = item.Id })" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+                        <a href="@Url.Action("DeleteDish", "Dish", new { id = item.Id })" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer text-muted small">
+                    <div class="d-flex justify-content-between">
+                        <span>Created: @item.CreatedAt.ToString("dd/MM/yyyy")</span>
+                        <span>Updated: @item.UpdatedAt.ToString("dd/MM/yyyy")</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="my-3 d-flex justify-content-center">
+        <pagination page-model="@ViewBag.Model"></pagination>
+    </div>
+
+    <script>
+        function filterMobileCards(searchText) {
+            searchText = searchText.toLowerCase();
+            const cards = document.querySelectorAll('.dish-card');
+            let visibleCount = 0;
+            
+            cards.forEach(card => {
+                const name = card.dataset.name;
+                const desc = card.dataset.desc;
+                const category = card.dataset.category;
+                
+                if (name.includes(searchText) || desc.includes(searchText) || category.includes(searchText)) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            const noResultsMessage = document.getElementById('noResultsMessage');
+            if (visibleCount === 0 && searchText !== '') {
+                noResultsMessage.classList.remove('d-none');
+            } else {
+                noResultsMessage.classList.add('d-none');
+            }
+        }
+    </script>
+</div>

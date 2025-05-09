@@ -24,6 +24,7 @@ namespace ManagerDish.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             #region Role
 
             modelBuilder.Entity<Role>().HasData(
@@ -46,6 +47,20 @@ namespace ManagerDish.Data
                 Avatar = "",
                 roleId = RoleEnum.Admin,
             });
+
+            modelBuilder.Entity<Account>()
+                .HasOne(a => a.CreatedByAccount)
+                .WithMany(a => a.Accounts)
+                .HasForeignKey(a => a.CreatedBy)
+                .OnDelete(DeleteBehavior.SetNull);
+            #endregion
+
+            #region Category
+            modelBuilder.Entity<Category>()
+                .HasMany(c => c.Dishes)
+                .WithOne(d => d.Category)
+                .HasForeignKey(d => d.CategoryId)
+                .OnDelete(DeleteBehavior.SetNull);
             #endregion
 
         }

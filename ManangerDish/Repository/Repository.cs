@@ -2,6 +2,7 @@
 using ManagerDish.Data;
 using Microsoft.EntityFrameworkCore;
 using ManagerDish.Repository.IRepository;
+using ManagerDish.Models;
 
 namespace ManagerDish.Repository
 {
@@ -18,9 +19,19 @@ namespace ManagerDish.Repository
             return await _dbSet.FirstOrDefaultAsync(filter);
         }
 
-        public async Task<IEnumerable<T>> GetAll(Expression<Func<T, bool>> filter)
+        public async Task<IEnumerable<T>> GetAllToListAsync(Expression<Func<T, bool>> filter)
         {
             return await _dbSet.Where(filter).ToListAsync();
+        }
+
+        public async Task<IEnumerable<T>> GetAllToListAsync()
+        {
+            return await _dbSet.ToListAsync();
+        }
+
+        public IQueryable<T> GetAllQuery()
+        {
+            return _dbSet.AsQueryable();
         }
 
         public async Task Create(T entity)

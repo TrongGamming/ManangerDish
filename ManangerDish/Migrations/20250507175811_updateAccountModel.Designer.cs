@@ -4,6 +4,7 @@ using ManagerDish.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ManagerDish.Migrations
 {
     [DbContext(typeof(ManagerDBContext))]
-    partial class ManagerDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250507175811_updateAccountModel")]
+    partial class updateAccountModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,11 +78,11 @@ namespace ManagerDish.Migrations
                         {
                             Id = 1,
                             Avatar = "",
-                            CreatedAt = new DateTime(2025, 5, 8, 15, 33, 27, 948, DateTimeKind.Local).AddTicks(1764),
+                            CreatedAt = new DateTime(2025, 5, 8, 0, 58, 11, 217, DateTimeKind.Local).AddTicks(3487),
                             Email = "tronghahu@gmail.com",
                             Name = "Admin",
-                            Password = "$2a$11$yIlvqLv2G.gq422DyKUeMOERSrNz.0WzvCGzWEt5xAkIP.FKFh/Fu",
-                            UpdatedAt = new DateTime(2025, 5, 8, 15, 33, 27, 948, DateTimeKind.Local).AddTicks(1772),
+                            Password = "$2a$11$uCBApWEP7.zfH2F7My0e6.a6yY3aMiHozIZShYzYVJYk7LWoS7kxu",
+                            UpdatedAt = new DateTime(2025, 5, 8, 0, 58, 11, 217, DateTimeKind.Local).AddTicks(3499),
                             isActive = true,
                             roleId = 1
                         });
@@ -120,7 +122,7 @@ namespace ManagerDish.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("CategoryId")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -464,7 +466,8 @@ namespace ManagerDish.Migrations
                     b.HasOne("ManagerDish.Models.Category", "Category")
                         .WithMany("Dishes")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
                 });

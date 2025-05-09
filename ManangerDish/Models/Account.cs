@@ -43,6 +43,7 @@ namespace ManagerDish.Models
         public virtual IEnumerable<OrderDetail>? OrderDetails { get; set; } = new List<OrderDetail>();
         public virtual IEnumerable<Payment>? Payments { get; set; } = new List<Payment>();
         public virtual IEnumerable<RefreshToken>? RefreshTokens { get; set; } = new List<RefreshToken>();
+        public virtual IEnumerable<Account>? Accounts { get; set; } = new List<Account>();
 
     }
 }

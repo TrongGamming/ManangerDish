@@ -1,0 +1,90 @@
+﻿@model ManagerDish.Models.Category
+@{
+    ViewData["Title"] = "Delete Category";
+    ViewData["Message"] = "Delete Category";
+}
+
+<div class="container py-4">
+    <h1 class="mb-4">Delete Category</h1>
+
+    <div class="alert alert-danger">
+        <h4><i class="bi bi-exclamation-triangle-fill"></i> Warning!</h4>
+        <p>Are you sure you want to delete this category? This action cannot be undone.</p>
+        @if (Model.Dishes != null && Model.Dishes.Any())
+        {
+            <p class="mb-0"><strong>This category has @Model.Dishes.Count() associated dishes that may be affected.</strong></p>
+        }
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Category Information</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="mb-3">
+                        <strong>@Html.DisplayNameFor(model => model.Id):</strong>
+                        <span class="ms-2">@Html.DisplayFor(model => model.Id)</span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>@Html.DisplayNameFor(model => model.Name):</strong>
+                        <span class="ms-2">@Html.DisplayFor(model => model.Name)</span>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="mb-3">
+                        <strong>@Html.DisplayNameFor(model => model.Description):</strong>
+                        <span class="ms-2">@Html.DisplayFor(model => model.Description)</span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>@Html.DisplayNameFor(model => model.CreatedAt):</strong>
+                        <span class="ms-2">@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="d-flex justify-content-end">
+            <a asp-action="Index" class="btn btn-secondary me-2">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash"></i> Confirm Delete
+            </button>
+        </div>
+    </form>
+
+    @if (Model.Dishes != null && Model.Dishes.Any())
+    {
+        <div class="mt-4">
+            <h3>Associated Dishes</h3>
+            <div class="card shadow-sm">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var dish in Model.Dishes)
+                            {
+                                <tr>
+                                    <td>@dish.Id</td>
+                                    <td>@dish.Name</td>
+                                    <td>@dish.Price.ToString("C")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>

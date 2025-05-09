@@ -9,6 +9,7 @@ namespace ManagerDish.Repository
         private readonly ManagerDBContext _context;
         public AccountRepository(ManagerDBContext context) : base(context)
         {
+            _context = context;
         }
         public void Update(Account entity)
         {

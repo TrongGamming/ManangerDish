@@ -1,0 +1,159 @@
+﻿@model List<Account>
+@{
+    ViewData["Title"] = "Accounts";
+    ViewData["Message"] = "Accounts";
+}
+<h1 class="my-4">List Account</h1>
+@* <img src="@Url.Action("CreateQR","QR", new {s = "123"})" /> *@
+<div class="mb-4">
+    <button class="btn btn-outline-secondary w-100 mb-3 d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="false" aria-controls="filterCollapse">
+        <i class="bi bi-funnel-fill me-2"></i> Show Filter Options
+    </button>
+
+    <form method="get">
+        <div class="collapse d-md-block" id="filterCollapse">
+            <div class="p-4 bg-light shadow-sm mb-3">
+                <h5 class="mb-3 border-bottom pb-2">Filter Dishes</h5>
+
+                <div class="row">
+                    <div class="col-12 col-md-6 col-lg-3 mb-3">
+                        <label for="InputDateFrom" class="form-label">Date From</label>
+                        <div class="input-group">
+                            <input name="InputDateFrom" id="InputDateFrom" value="@ViewBag.InputDateFrom" type="date" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3 mb-3">
+                        <label for="InputDateTo" class="form-label">Date To</label>
+                        <div class="input-group">
+                            <input name="InputDateTo" id="InputDateTo" value="@ViewBag.InputDateTo" type="date" min="0" class="form-control"  />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-12 mb-3">
+                        <label for="searchInput" class="form-label">Search</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" id="searchInput" name="q" placeholder="Dish Name or Description" value="@ViewBag.search">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-12 col-md-6 mb-3">
+                        <button class="btn btn-primary w-100" type="submit">
+                            <i class="bi bi-funnel-fill me-2"></i> Apply Filters
+                        </button>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <a href="@Url.Action("Accounts", "Account")" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-x-circle me-2"></i> Clear Filters
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end mb-3">
+            <a class="btn btn-primary d-flex align-items-center justify-content-center" asp-controller="Dish" asp-action="CreateDish">
+                <i class="bi bi-plus-circle me-2"></i> Create New Dish
+            </a>
+        </div>
+    </form>
+</div>
+
+
+<div class="p-4 bg-light shadow-sm d-none d-md-block">
+    <div class="row fw-bold pb-2 border-bottom text-center">
+        <div class="col-2">Name</div>
+        <div class="col-3">Email</div>
+        <div class="col-2">Role</div>
+        <div class="col-2">Avatar</div>
+        <div class="col-3">Edit</div>
+    </div>
+    @foreach (var item in Model)
+    {
+        <div class="row py-2 border-bottom text-center">
+            <div class="col-2 d-flex justify-content-center align-items-center">@item.Name</div>
+            <div class="col-3 d-flex justify-content-center align-items-center">@item.Email</div>
+            <div class="col-2 d-flex justify-content-center align-items-center">@(item.Role?.RoleName ?? "Null")</div>
+            <div class="col-2 d-flex justify-content-center align-items-center">
+                <img src="@item.Avatar" width="50" height="50" class="rounded-circle" style="object-fit: cover" />
+            </div>
+            <div class="col-3 d-flex justify-content-center align-items-center">
+                <a href="@Url.Action("DetailsAccount", "Account", new { id = item.Id })" class="btn btn-sm btn-outline-info">
+                    <i class="bi bi-info-circle"></i> Details
+                </a>
+                <a href="@Url.Action("EditAccount", "Account", new { id = item.Id })" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-pencil-square"></i> Edit
+                </a>
+                <a href="@Url.Action("DeleteAccount", "Account", new { id = item.Id })" class="btn btn-sm btn-outline-danger">
+                    <i class="bi bi-trash"></i> Delete
+                </a>
+            </div>
+        </div>
+    }
+    <div class="my-3">
+        <pagination page-model="@ViewBag.Model"></pagination>
+    </div>
+</div>
+
+<div class="d-md-none">
+    @foreach (var item in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <img src="@item.Avatar" width="50" height="50" class="rounded-circle me-3" style="object-fit: cover" />
+                    <div>
+                        <h5 class="mb-0">@item.Name</h5>
+                        <small class="text-muted">@item.Email</small>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <strong>Role:</strong> @(item.Role?.RoleName ?? "Null")
+                </div>
+                <div class="d-flex justify-content-end">
+                    <a href="@Url.Action("EditAccount", "Account", new { id = item.Id })" class="btn btn-sm btn-outline-primary me-2">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                    <a href="@Url.Action("DeleteAccount", "Account", new { id = item.Id })" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash"></i> Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="my-3 d-flex justify-content-center">
+        <pagination page-model="@ViewBag.Model"></pagination>
+    </div>
+</div>
+
+<script>
+    function filterMobileCards(searchText) {
+        searchText = searchText.toLowerCase();
+        const cards = document.querySelectorAll('.dish-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const name = card.dataset.name;
+            const desc = card.dataset.desc;
+            const category = card.dataset.category;
+
+            if (name.includes(searchText) || desc.includes(searchText) || category.includes(searchText)) {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        const noResultsMessage = document.getElementById('noResultsMessage');
+        if (visibleCount === 0 && searchText !== '') {
+            noResultsMessage.classList.remove('d-none');
+        } else {
+            noResultsMessage.classList.add('d-none');
+        }
+    }
+</script>

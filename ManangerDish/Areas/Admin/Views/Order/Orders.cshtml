@@ -1,0 +1,162 @@
+﻿@model List<OrderDetail>
+@{
+    ViewData["Title"] = "Order";
+    ViewData["Message"] = "Order";
+}
+<h1 class="my-4">List Order</h1>
+@* <img src="@Url.Action("CreateQR","QR", new {s = "123"})" /> *@
+<div class="mb-4">
+    <button class="btn btn-outline-secondary w-100 mb-3 d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="false" aria-controls="filterCollapse">
+        <i class="bi bi-funnel-fill me-2"></i> Show Filter Options
+    </button>
+
+    <form method="get">
+        <div class="collapse d-md-block" id="filterCollapse">
+            <div class="p-4 bg-light shadow-sm mb-3">
+                <h5 class="mb-3 border-bottom pb-2">Filter Dishes</h5>
+
+                <div class="row">
+                    <div class="col-4 mb-3">
+                        <label for="searchInput" class="form-label">Status</label>
+                        <div class="input-group">
+                            <select asp-items="@Html.GetEnumSelectList<OrderStatus>()" class="form-control" name="Status">
+								<option value="">---- All ----</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-12 mb-3">
+                        <label for="searchInput" class="form-label">Search</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" id="searchInput" name="q" placeholder="Dish Name or Description" value="@ViewBag.search">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-12 col-md-6 mb-3">
+                        <button class="btn btn-primary w-100" type="submit">
+                            <i class="bi bi-funnel-fill me-2"></i> Apply Filters
+                        </button>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <a href="@Url.Action("Orders", "Order")" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-x-circle me-2"></i> Clear Filters
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end mb-3">
+            <a class="btn btn-primary d-flex align-items-center justify-content-center" asp-controller="Order" asp-action="CreateOrder">
+                <i class="bi bi-plus-circle me-2"></i> Create New Order
+            </a>
+        </div>
+    </form>
+</div>
+
+
+<div class="p-4 bg-light shadow-sm d-none d-md-block">
+    <div class="row fw-bold pb-2 border-bottom text-center">
+        <div class="col-2">Guest Name</div>
+        <div class="col-3">Talbe Number</div>
+        <div class="col-2">Dish</div>
+        <div class="col-2">Handler</div>
+        <div class="col-3">Edit</div>
+    </div>
+    @foreach (var item in Model)
+    {
+        <div class="row py-2 border-bottom text-center">
+            <div class="col-2 d-flex justify-content-center align-items-center">@(item.Guest?.Name ?? "Null")</div>
+            <div class="col-3 d-flex justify-content-center align-items-center">@(item.Order?.Table?.Number)</div>
+            <div class="col-2 d-flex justify-content-center align-items-center">
+                <img src="@(item.Dish.Image)" width="50" height="50" style="object-fit: cover" />
+                <span>
+                    <strong>@string.Format("{0:C0}", item.Dish.Price) X @item.Quantity</strong>
+                    <p>@string.Format( "{0:C0}",item.Dish.Price * item.Quantity)</p>
+                </span>
+            </div>
+            <div class="col-2 d-flex justify-content-center align-items-center">@(item.Handler?.Name ?? "Null")</div>
+            <div class="col-3 d-flex justify-content-center align-items-center">
+                <a href="@Url.Action("DetailsOrder", "Order", new { id = item.Id })" class="btn btn-sm btn-outline-info">
+                    <i class="bi bi-info-circle"></i> Details
+                </a>
+                <a href="@Url.Action("EditOrder", "Order", new { id = item.Id })" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-pencil-square"></i> Edit
+                </a>
+                <a href="@Url.Action("DeleteOrder", "Order", new { id = item.Id })" class="btn btn-sm btn-outline-danger">
+                    <i class="bi bi-trash"></i> Delete
+                </a>
+            </div>
+        </div>
+    }
+    <div class="my-3">
+        <pagination page-model="@ViewBag.Model"></pagination>
+    </div>
+</div>
+
+<div class="d-md-none">
+    @foreach (var item in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <img src="@item.Dish.Image" width="50" height="50" class="rounded-circle me-3" style="object-fit: cover" />
+                    <div>
+                        <h5 class="mb-0">@item.Guest.Name</h5>
+                        <small class="text-muted">@item.Order.Table.Number</small>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <strong>Handler:</strong> @(item.Handler?.Name ?? "Null")
+                </div>
+                <div class="d-flex justify-content-end">
+                    <a href="@Url.Action("DetailsOrder", "Order", new { id = item.Id })" class="btn btn-sm btn-outline-info">
+                        <i class="bi bi-info-circle"></i> Details
+                    </a>
+                    <a href="@Url.Action("EditOrder", "Order", new { id = item.Id })" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                    <a href="@Url.Action("DeleteOrder", "Order", new { id = item.Id })" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash"></i> Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="my-3 d-flex justify-content-center">
+        <pagination page-model="@ViewBag.Model"></pagination>
+    </div>
+</div>
+
+<script>
+    function filterMobileCards(searchText) {
+        searchText = searchText.toLowerCase();
+        const cards = document.querySelectorAll('.dish-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const name = card.dataset.name;
+            const desc = card.dataset.desc;
+            const category = card.dataset.category;
+
+            if (name.includes(searchText) || desc.includes(searchText) || category.includes(searchText)) {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        const noResultsMessage = document.getElementById('noResultsMessage');
+        if (visibleCount === 0 && searchText !== '') {
+            noResultsMessage.classList.remove('d-none');
+        } else {
+            noResultsMessage.classList.add('d-none');
+        }
+    }
+</script>

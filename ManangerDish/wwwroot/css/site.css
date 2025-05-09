@@ -16,3 +16,39 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.mainContent, .sidebar {
+    transition: all .3s linear;
+}
+
+.sidebar {
+    width: 20%
+}
+
+.sidebar__icon {
+    display: none;
+}
+
+@media screen and (max-width: 767px) {
+    .mainContent {
+        width: calc(100% - 61.5px) !important;
+    }
+
+    .sidebar{
+        width: 61.5px;
+        z-index:99;
+        overflow: hidden;
+        font-size: 1.4rem
+    }
+
+    .sidebar__check:checked ~ .sidebar{
+        width: 40%;
+    }
+
+    .sidebar__heading {
+        display: none !important
+    }
+    .sidebar__icon {
+        display: block !important;
+    }
+}

@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using ManagerDish.Data;
+using ManagerDish.Hubs;
 using ManagerDish.Middleware;
 using ManagerDish.Repository;
 using ManagerDish.Repository.IRepository;
@@ -43,6 +44,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<AuthService>();
@@ -58,6 +60,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -66,10 +69,15 @@ app.UseRouting();
 app.UseMiddleware<AutomaticRefreshToken>();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseMiddleware<RoleRedirectMiddleware>();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+      name: "areas",
+      pattern: "{area=Guest}/{controller=Home}/{action=Index}/{id?}"
+    );
+});
+
+app.MapHub<OrderHub>("/OrderHub");
 
 app.Run();
