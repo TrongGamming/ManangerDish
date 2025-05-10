@@ -18,6 +18,7 @@ namespace ManagerDish.Models
         public int Total { get; set; } = 0;
 
         public virtual IEnumerable<OrderDetail>? OrderDetails { get; set; } 
+        public virtual IEnumerable<Guest>? Guests { get; set; } = new List<Guest>();
 
     }
 }

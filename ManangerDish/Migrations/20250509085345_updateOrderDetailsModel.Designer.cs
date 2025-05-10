@@ -4,6 +4,7 @@ using ManagerDish.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ManagerDish.Migrations
 {
     [DbContext(typeof(ManagerDBContext))]
-    partial class ManagerDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250509085345_updateOrderDetailsModel")]
+    partial class updateOrderDetailsModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,11 +78,11 @@ namespace ManagerDish.Migrations
                         {
                             Id = 1,
                             Avatar = "",
-                            CreatedAt = new DateTime(2025, 5, 10, 0, 52, 2, 488, DateTimeKind.Local).AddTicks(9818),
+                            CreatedAt = new DateTime(2025, 5, 9, 15, 53, 44, 553, DateTimeKind.Local).AddTicks(6874),
                             Email = "tronghahu@gmail.com",
                             Name = "Admin",
-                            Password = "$2a$11$PdbBsIBrRzaWpeQND6sCReUoqliIO/FKJtUdBF6w9dBIphxij99Fi",
-                            UpdatedAt = new DateTime(2025, 5, 10, 0, 52, 2, 488, DateTimeKind.Local).AddTicks(9827),
+                            Password = "$2a$11$Ve8MKkHv7SBYDsyq2vJkvuZVXFbAlvzfWfOWazES11g4H0k7QLJ7a",
+                            UpdatedAt = new DateTime(2025, 5, 9, 15, 53, 44, 553, DateTimeKind.Local).AddTicks(6883),
                             isActive = true,
                             roleId = 1
                         });
@@ -216,9 +218,6 @@ namespace ManagerDish.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("int");
-
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -231,8 +230,6 @@ namespace ManagerDish.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
 
                     b.HasIndex("TableId");
 
@@ -487,17 +484,11 @@ namespace ManagerDish.Migrations
 
             modelBuilder.Entity("ManagerDish.Models.Guest", b =>
                 {
-                    b.HasOne("ManagerDish.Models.Order", "Order")
-                        .WithMany("Guests")
-                        .HasForeignKey("OrderId");
-
                     b.HasOne("ManagerDish.Models.Table", "Table")
                         .WithMany("Guests")
                         .HasForeignKey("TableId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Order");
 
                     b.Navigation("Table");
                 });
@@ -604,8 +595,6 @@ namespace ManagerDish.Migrations
 
             modelBuilder.Entity("ManagerDish.Models.Order", b =>
                 {
-                    b.Navigation("Guests");
-
                     b.Navigation("OrderDetails");
                 });
 

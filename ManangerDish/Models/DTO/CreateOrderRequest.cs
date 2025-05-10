@@ -7,11 +7,11 @@ namespace ManagerDish.Models.DTO
         [Required]
         public int TableId { get; set; }
 
-        public int GuestId { get; set; }
+        public int? GuestId { get; set; }
 
-        public String NewGuestName { get; set; } = "";
+        public String? NewGuestName { get; set; } = "";
         [Phone]
-        public String NewGuestPhone { get; set; } = "";
+        public String? NewGuestPhone { get; set; } = "";
 
         public List<GuestOrderItemDTO> GuestOrder { get; set; } = new();
 

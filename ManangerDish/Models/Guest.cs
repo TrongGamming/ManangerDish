@@ -23,6 +23,10 @@ namespace ManagerDish.Models
         [ForeignKey("TableId")]
         public virtual Table? Table { get; set; }
 
+        public int? OrderId { get; set; }
+        [ForeignKey("OrderId")]
+        public virtual Order? Order { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
         public DateTime CheckInTime { get; set; } = DateTime.Now;

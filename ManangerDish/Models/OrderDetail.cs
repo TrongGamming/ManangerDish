@@ -22,8 +22,7 @@ namespace ManagerDish.Models
         [Required]
         public int Quantity { get; set; } = 1;
 
-        [Required]
-        public int HandlerId { get; set; }
+        public int? HandlerId { get; set; } = null;
         [ForeignKey("HandlerId")]
         public virtual Account? Handler { get; set; }
 
