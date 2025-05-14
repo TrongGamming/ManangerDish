@@ -105,6 +105,7 @@ namespace ManagerDish.Areas.Admin.Controllers
                 UserName = account.Name,
                 Email = account.Email,
                 RoleId = (int)account.roleId,
+                ImagePath = account.Avatar,
             };
             return View(model);
         }
@@ -163,6 +164,7 @@ namespace ManagerDish.Areas.Admin.Controllers
                 RoleId = (int)account.roleId,
                 Password = hashValue,
                 ConfirmPassword = hashValue,
+                ImagePath = account.Avatar,
             };
             return View(model);
         }

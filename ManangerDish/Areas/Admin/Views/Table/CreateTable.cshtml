@@ -1,0 +1,72 @@
+﻿@model CreateTableRequest
+@{
+    ViewData["Title"] = "Manage Table";
+    ViewData["Message"] = "Create Table";
+}
+
+<div class="container py-4">
+    <h1 class="mb-4">Create Table</h1>
+
+    <div class="p-4 bg-light shadow-sm rounded">
+        <form method="post" class="mt-2 py-4 border-top">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Capicity" class="form-label">Table Capacity</label>
+                    <input asp-for="Capicity" type="number" class="form-control" placeholder="Enter table capacity" min="1" max="10" />
+                    <span asp-validation-for="Capicity" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Status" class="form-label">Table Status</label>
+                    <select asp-for="Status" class="form-select" asp-items="@Html.GetEnumSelectList<TableStatus>()">
+                        <option value="">-- Select Status --</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Token" class="form-label">Table Token</label>
+                    <div class="input-group">
+                        <input asp-for="Token" type="text" class="form-control" readonly />
+                        <button type="button" class="btn btn-outline-secondary" id="regenerateToken">
+                            <i class="bi bi-arrow-repeat"></i> Regenerate
+                        </button>
+                    </div>
+                    <small class="form-text text-muted">
+                        Token is automatically generated for table identification
+                    </small>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end mt-4">
+                <a asp-controller="Table" asp-action="Index" class="btn btn-secondary me-2">Cancel</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Create Table
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('regenerateToken').addEventListener('click', function() {
+            // Generate a new random token (UUID)
+            const newToken = crypto.randomUUID();
+            document.getElementById('Token').value = newToken;
+        });
+
+        // Update the UpdatedAt field whenever the form is modified
+        document.querySelector('form').addEventListener('change', function() {
+            const now = new Date();
+            const localDateTime = now.toISOString().slice(0, 16);
+            document.getElementById('UpdatedAt').value = localDateTime;
+        });
+    </script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

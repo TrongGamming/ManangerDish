@@ -196,5 +196,16 @@ namespace ManagerDish.Services
             }
             return null;
         }
+
+        public async Task<Account> GetInFormationAccount()
+        {
+            var userIdClaim = _httpContextAccessor.HttpContext.User.FindFirst("sub")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim))
+            {
+                return null;
+            }
+            var account = await _unitOfWork.Account.Get(a => a.Id == int.Parse(userIdClaim));
+            return account;
+        }
     }
 }

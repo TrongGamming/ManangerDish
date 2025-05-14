@@ -27,5 +27,9 @@ namespace ManagerDish.Models.DTO
 
         [DataType(DataType.Text)]
         public IFormFile? Avatar { get; set; } = null!;
+
+        [Required]
+        [DataType(DataType.Text)]
+        public string? ImagePath { get; set; }
     }
 }

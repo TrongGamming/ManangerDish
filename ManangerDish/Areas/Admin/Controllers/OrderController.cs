@@ -4,6 +4,7 @@ using ManagerDish.Models;
 using ManagerDish.Models.DTO;
 using ManagerDish.Models.Enum;
 using ManagerDish.Repository.IRepository;
+using ManagerDish.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
@@ -18,11 +19,13 @@ namespace ManagerDish.Areas.Admin.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHubContext<OrderHub> _hubContext;
         private const int DefaultPageSize = 5;
+        private readonly AuthService _authService;
 
-        public OrderController(IUnitOfWork unitOfWork, IHubContext<OrderHub> hubContext)
+        public OrderController(IUnitOfWork unitOfWork, IHubContext<OrderHub> hubContext, AuthService authService)
         {
             _unitOfWork = unitOfWork;
             _hubContext = hubContext;
+            _authService = authService;
         }
 
         [HttpGet]
@@ -146,7 +149,7 @@ namespace ManagerDish.Areas.Admin.Controllers
             {
                 var orderDetail = new OrderDetail
                 {
-                    OrderId = guest.OrderId ?? order.Id, 
+                    OrderId = guest.OrderId ?? order.Id,
                     guestId = guest.Id,
                     DishId = item.DishId,
                     Quantity = item.Quality,
@@ -160,5 +163,78 @@ namespace ManagerDish.Areas.Admin.Controllers
             await _unitOfWork.Save();
             return RedirectToAction("Orders");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> EditOrder(int id)
+        {
+            var orderDetail = await _unitOfWork.OrderDetail.Get(od => od.Id == id);
+            if (orderDetail == null)
+            {
+                return NotFound();
+            }
+            ViewBag.OrderDetails = orderDetail;
+            ViewBag.Dishes = await _unitOfWork.Dish.GetAllToListAsync();
+            var editOrderRequest = new EditOrderRequest
+            {
+                OrderId = orderDetail.Id,
+            };
+            return View(editOrderRequest);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DeleteOrder(int id)
+        {
+            var orderDetail = await _unitOfWork.OrderDetail.Get(od => od.Id == id);
+            if (orderDetail == null)
+            {
+                return NotFound();
+            }
+            return View(orderDetail);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteOrder(OrderDetail orderDetail)
+        {
+            var existingOrderDetail = await _unitOfWork.OrderDetail.Get(od => od.Id == orderDetail.Id);
+            if (existingOrderDetail == null)
+            {
+                return NotFound();
+            }
+            await _unitOfWork.OrderDetail.Remove(existingOrderDetail);
+            await _unitOfWork.Save();
+            return RedirectToAction("Orders");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeStatus(int id, OrderStatus Status)
+        {
+            var referer = Request.Headers["Referer"].ToString();
+
+            string localRedirectUrl;
+            if (Uri.TryCreate(referer, UriKind.Absolute, out var refererUri))
+            {
+                localRedirectUrl = refererUri.PathAndQuery;
+            }
+            else
+            {
+                localRedirectUrl = referer;
+            }
+            var orderDetail = await _unitOfWork.OrderDetail.Get(od => od.Id == id);
+            if (orderDetail == null)
+                return NotFound();
+
+            orderDetail.Status = Status;
+            orderDetail.UpdatedAt = DateTime.UtcNow;
+            var handler = await _authService.GetInFormationAccount();
+            orderDetail.HandlerId = handler.Id;
+
+            _unitOfWork.OrderDetail.Update(orderDetail);
+            await _unitOfWork.Save();
+            await _hubContext.Clients.Group(orderDetail.Order.TableId.ToString()).SendAsync("Refresh", "Refresh succes");
+
+            return LocalRedirect(localRedirectUrl);
+        }
+
     }
 }
