@@ -18,11 +18,9 @@ namespace ManagerDish.Models.DTO
         [DataType(DataType.Currency, ErrorMessage = "Giá tiền nhập không hợp lệ")]
         public int Price { get; set; } = 0;
 
-        [Required(ErrorMessage = "Vui lòng nhập trường này")]
         [DataType(DataType.Text)]
-        public IFormFile Image { get; set; }
+        public IFormFile? Image { get; set; }
 
-        [Required]
         [DataType(DataType.Text)]
         public string? ImagePath { get; set; }
 

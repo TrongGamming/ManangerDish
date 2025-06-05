@@ -76,11 +76,11 @@ namespace ManagerDish.Migrations
                         {
                             Id = 1,
                             Avatar = "",
-                            CreatedAt = new DateTime(2025, 5, 10, 0, 52, 2, 488, DateTimeKind.Local).AddTicks(9818),
+                            CreatedAt = new DateTime(2025, 6, 2, 23, 30, 23, 500, DateTimeKind.Local).AddTicks(4086),
                             Email = "tronghahu@gmail.com",
                             Name = "Admin",
-                            Password = "$2a$11$PdbBsIBrRzaWpeQND6sCReUoqliIO/FKJtUdBF6w9dBIphxij99Fi",
-                            UpdatedAt = new DateTime(2025, 5, 10, 0, 52, 2, 488, DateTimeKind.Local).AddTicks(9827),
+                            Password = "$2a$11$BlTb8W22qkaJAYyb6JBc9.EWqp0j/q/qr5qYMd5/TUJ72mYzdOaoK",
+                            UpdatedAt = new DateTime(2025, 6, 2, 23, 30, 23, 500, DateTimeKind.Local).AddTicks(4105),
                             isActive = true,
                             roleId = 1
                         });
@@ -227,6 +227,10 @@ namespace ManagerDish.Migrations
                     b.Property<int>("TableId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -247,6 +251,9 @@ namespace ManagerDish.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("Paid")
                         .HasColumnType("bit");
 
@@ -255,6 +262,9 @@ namespace ManagerDish.Migrations
 
                     b.Property<int>("Total")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

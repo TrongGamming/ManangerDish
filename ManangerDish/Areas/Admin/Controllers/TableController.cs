@@ -1,4 +1,5 @@
-﻿using ManagerDish.Extensions;
+﻿using System.Security.Cryptography.X509Certificates;
+using ManagerDish.Extensions;
 using ManagerDish.Models;
 using ManagerDish.Models.DTO;
 using ManagerDish.Models.Enum;
@@ -133,6 +134,63 @@ namespace ManagerDish.Areas.Admin.Controllers
                 return RedirectToAction("Tables");
             }
             return View(request);
+        }
+
+        [HttpGet]
+        public IActionResult Guest(string token)
+        {
+            ViewBag.Token = token;
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Guest(GuestRequest request, string token)
+        {
+            
+            if (string.IsNullOrEmpty(request.Name) || string.IsNullOrEmpty(request.PhoneNumber))
+            {
+                ModelState.AddModelError("", "Name and Phone are required.");
+                return View();
+            }
+            var table = await _unitOfWork.Table.Get(x => x.Token == token);
+            if (table == null)
+            {
+                ModelState.AddModelError("", "Table not found.");
+                return View();
+            }
+            var order = await _unitOfWork.Order.Get(o => o.TableId == table.Number && o.Paid == false);
+
+            if (order == null)
+            {
+                order = new Order
+                {
+                    TableId = table.Number,
+                    Total = 0,
+                    Paid = false,
+                };
+
+                await _unitOfWork.Order.Create(order);
+                await _unitOfWork.Save();
+            }
+            var guest = new Models.Guest
+            {
+                Name = request.Name,
+                PhoneNumber = request.PhoneNumber,
+                TableId = table.Number,
+                Token = Guid.NewGuid().ToString(),
+                OrderId = order.Id,
+            };
+            Response.Cookies.Append("GuestToken", guest.Token, new CookieOptions
+            {
+                Expires = DateTimeOffset.Now.AddHours(4),
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict
+            });
+            await _unitOfWork.Guest.Create(guest);
+            await _unitOfWork.Save();
+            return RedirectToAction("Menu", "Order", new {area = "Guest"});
         }
     }
 }

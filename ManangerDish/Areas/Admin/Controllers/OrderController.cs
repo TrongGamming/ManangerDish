@@ -53,6 +53,7 @@ namespace ManagerDish.Areas.Admin.Controllers
 
                 return new
                 {
+                    OrderId = o.Id,
                     TableNumber = o.Table.Number,
                     QualityGuest = o.Guests.Count(),
                     PedingOrder = statusCounts.GetValueOrDefault(OrderStatus.Pending, 0),
@@ -139,6 +140,7 @@ namespace ManagerDish.Areas.Admin.Controllers
                     CreatedAt = DateTime.UtcNow,
                     CheckInTime = DateTime.UtcNow,
                     OrderId = order.Id,
+                    Token = Guid.NewGuid().ToString("N"),
                 };
 
                 await _unitOfWork.Guest.Create(guest);
@@ -147,16 +149,19 @@ namespace ManagerDish.Areas.Admin.Controllers
 
             foreach (var item in request.GuestOrder)
             {
-                var orderDetail = new OrderDetail
+                if (item.Quality > 0)
                 {
-                    OrderId = guest.OrderId ?? order.Id,
-                    guestId = guest.Id,
-                    DishId = item.DishId,
-                    Quantity = item.Quality,
-                    Status = OrderStatus.Pending,
-                };
+                    var orderDetail = new OrderDetail
+                    {
+                        OrderId = guest.OrderId ?? order.Id,
+                        guestId = guest.Id,
+                        DishId = item.DishId,
+                        Quantity = item.Quality,
+                        Status = OrderStatus.Pending,
+                    };
 
-                await _unitOfWork.OrderDetail.Create(orderDetail);
+                    await _unitOfWork.OrderDetail.Create(orderDetail);
+                }
             }
 
             await _hubContext.Clients.Group(guest.TableId.ToString()).SendAsync("Refresh", "Refresh Success");
@@ -229,12 +234,62 @@ namespace ManagerDish.Areas.Admin.Controllers
             var handler = await _authService.GetInFormationAccount();
             orderDetail.HandlerId = handler.Id;
 
+            var order = await _unitOfWork.Order.Get(o => o.Id == orderDetail.OrderId);
+            order.Total += orderDetail.Quantity * orderDetail.Dish.Price;
+
             _unitOfWork.OrderDetail.Update(orderDetail);
+            _unitOfWork.Order.Update(order);
             await _unitOfWork.Save();
             await _hubContext.Clients.Group(orderDetail.Order.TableId.ToString()).SendAsync("Refresh", "Refresh succes");
 
             return LocalRedirect(localRedirectUrl);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Payment(int id)
+        {
+            var order = await _unitOfWork.Order.Get(o => o.Id == id && !o.Paid);
+            if (order == null)
+            {
+                return NotFound();
+            }
+            var paymentRequest = new PaymentRequest
+            {
+                Order = order,
+                TotalAmount = order.Total
+
+            };
+            return View(paymentRequest);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ProcessPayment(ProcessPaymentRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(request);
+            }
+            var order = await _unitOfWork.Order.Get(o => o.Id == request.OrderId && !o.Paid);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            foreach(var guest in order.Guests)
+            {
+                guest.CheckOutTime = DateTime.UtcNow;
+                _unitOfWork.Guest.Update(guest);
+            }
+
+            await _unitOfWork.Save();
+            order.Paid = true;
+            order.UpdatedAt = DateTime.UtcNow;
+            _unitOfWork.Order.Update(order);
+            await _unitOfWork.Save();
+            await _hubContext.Clients.Group(order.TableId.ToString()).SendAsync("Refresh", "Refresh success");
+            await _hubContext.Clients.Group(order.TableId.ToString()).SendAsync("Logout", "Logout success");
+            return RedirectToAction("Orders");
+        }
     }
 }

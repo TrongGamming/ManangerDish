@@ -2,7 +2,389 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Hello @ViewBag.Name with role is @ViewBag.RoleName</a>.</p>
-</div>
+<section id="home" class="hero-section">
+    <div class="hero-slider h-100">
+        <!-- Slider sẽ được thêm bằng JavaScript -->
+    </div>
+</section>
+
+<!-- Giới thiệu -->
+<section id="about" class="about-section py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2 class="section-title">Câu chuyện Manwah</h2>
+                <p class="lead">
+                    Manwah Hotpot - Mang hương vị lẩu Đài Loan chính
+                    hiệu đến Việt Nam
+                </p>
+                <p>
+                    Với hơn 10 năm kinh nghiệm trong lĩnh vực ẩm thực,
+                    Manwah tự hào là thương hiệu lẩu Đài Loan hàng đầu
+                    tại Việt Nam. Chúng tôi cam kết mang đến cho thực
+                    khách những trải nghiệm ẩm thực tuyệt vời nhất với
+                    nguyên liệu tươi ngon và công thức nấu nướng độc
+                    đáo.
+                </p>
+            </div>
+            <div class="col-lg-6">
+                <img src="images/manwah-about.jpg"
+                     alt="Manwah Restaurant"
+                     class="img-fluid rounded" />
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Thực đơn nổi bật -->
+<section id="menu" class="menu-section py-5 bg-light">
+    <div class="container">
+        <h2 class="section-title text-center mb-5">Thực đơn nổi bật</h2>
+        <div class="row">
+            <!-- Menu items sẽ được thêm bằng JavaScript -->
+        </div>
+    </div>
+</section>
+
+<!-- Ưu đãi -->
+<section id="promotions" class="promotions-section py-5">
+    <div class="container">
+        <h2 class="section-title text-center mb-5">Ưu đãi đặc biệt</h2>
+        <div class="row">
+            <!-- Promotions sẽ được thêm bằng JavaScript -->
+        </div>
+    </div>
+</section>
+
+<!-- Hệ thống nhà hàng -->
+<section id="locations" class="locations-section py-5 bg-light">
+    <div class="container">
+        <h2 class="section-title text-center mb-5">
+            Hệ thống nhà hàng
+        </h2>
+        <div class="row">
+            <!-- Locations sẽ được thêm bằng JavaScript -->
+        </div>
+    </div>
+</section>
+
+<!-- Đặt bàn -->
+<section id="reservation" class="reservation-section py-5">
+    <div class="container">
+        <h2 class="section-title text-center mb-5">Đặt bàn</h2>
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <form id="reservationForm" class="reservation-form">
+                    <div class="mb-3">
+                        <input type="text"
+                               class="form-control"
+                               placeholder="Họ và tên"
+                               required />
+                    </div>
+                    <div class="mb-3">
+                        <input type="tel"
+                               class="form-control"
+                               placeholder="Số điện thoại"
+                               required />
+                    </div>
+                    <div class="mb-3">
+                        <input type="email"
+                               class="form-control"
+                               placeholder="Email" />
+                    </div>
+                    <div class="mb-3">
+                        <input type="date"
+                               class="form-control"
+                               required />
+                    </div>
+                    <div class="mb-3">
+                        <input type="time"
+                               class="form-control"
+                               required />
+                    </div>
+                    <div class="mb-3">
+                        <input type="number"
+                               class="form-control"
+                               placeholder="Số người"
+                               min="1"
+                               required />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        Đặt bàn ngay
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+                // Dữ liệu mẫu cho slider
+        const sliderData = [
+            {
+                image: "https://brand-pcms.ggg.systems/media/so/homecmsdata/banners/TGS_news_Feature.png",
+                title: "Lẩu Đài Loan Chính Hiệu",
+                description: "Trải nghiệm hương vị lẩu đặc trưng từ Đài Loan",
+                buttonText: "Đặt bàn ngay",
+            },
+            {
+                image: "https://cmsbrandwebsites.ggg.com.vn/wp-content/uploads/2022/10/manwah-hanh-trinh-van-dam-hn.jpg",
+                title: "Nguyên Liệu Tươi Ngon",
+                description: "Chất lượng nguyên liệu được tuyển chọn kỹ lưỡng",
+                buttonText: "Xem thực đơn",
+            },
+            {
+                image: "https://imagedelivery.net/1J0pLjFdKJBzEdIlr1bDRQ/350311e6-2e06-46b3-e93b-0de7efeaeb00/public",
+                title: "Không Gian Sang Trọng",
+                description: "Mang đến trải nghiệm ẩm thực hoàn hảo",
+                buttonText: "Khám phá ngay",
+            },
+        ];
+
+        // Dữ liệu mẫu cho menu
+        const menuData = [
+            {
+                image: "https://brand-pcms.ggg.systems/media/catalog/product/cache/fccf9bc1c56510f6f2e84ded9c30a375/2/6/26_2.jpg",
+                title: "Lẩu Tứ Xuyên",
+                description:
+                    "Vị cay nồng đặc trưng của Tứ Xuyên, kết hợp với các loại gia vị thượng hạng",
+                price: "299,000đ",
+                category: "Lẩu cay",
+            },
+            {
+                image: "https://brand-pcms.ggg.systems/media/catalog/product/cache/fccf9bc1c56510f6f2e84ded9c30a375/2/6/26_2.jpg",
+                title: "Lẩu Hải Sản",
+                description:
+                    "Hải sản tươi sống nhập khẩu, đảm bảo chất lượng và hương vị tuyệt hảo",
+                price: "399,000đ",
+                category: "Lẩu hải sản",
+            },
+            {
+                image: "https://brand-pcms.ggg.systems/media/catalog/product/cache/fccf9bc1c56510f6f2e84ded9c30a375/2/6/26_2.jpg",
+                title: "Lẩu Nấm",
+                description:
+                    "Nấm tươi ngon, thanh đạm, phù hợp cho những ai yêu thích vị thanh nhẹ",
+                price: "249,000đ",
+                category: "Lẩu thanh đạm",
+            },
+        ];
+
+        // Dữ liệu mẫu cho ưu đãi
+        const promotionData = [
+            {
+                title: "Ưu đãi sinh nhật",
+                description:
+                    "Giảm 20% cho nhóm từ 4 người trở lên. Áp dụng cho hóa đơn từ 1.000.000đ",
+                validUntil: "31/12/2024",
+                code: "BIRTHDAY20",
+            },
+            {
+                title: "Combo gia đình",
+                description:
+                    "Combo 4 người chỉ 999,000đ, bao gồm nước lẩu, thịt bò, hải sản và rau củ",
+                validUntil: "31/12/2024",
+                code: "FAMILY999",
+            },
+        ];
+
+        // Dữ liệu mẫu cho địa điểm
+        const locationData = [
+            {
+                image: "https://manwah.com.vn/wp-content/uploads/2023/12/-location-1.jpg",
+                name: "Manwah Q1",
+                address: "123 Đường ABC, Quận 1, TP.HCM",
+                phone: "(028) 1234 5678",
+                hours: "10:00 - 22:00",
+                mapUrl: "#",
+            },
+            {
+                image: "https://manwah.com.vn/wp-content/uploads/2023/12/manwah-location-2.jpg",
+                name: "Manwah Q3",
+                address: "456 Đường XYZ, Quận 3, TP.HC  M",
+                phone: "(028) 8765 4321",
+                hours: "10:00 - 22:00",
+                mapUrl: "#",
+            },
+        ];
+
+        // Khởi tạo slider
+        function initSlider() {
+            const slider = document.querySelector(".hero-slider");
+            let currentSlide = 0;
+
+            function createSlide(slide) {
+                return `
+                    <div class="hero-slide" style="background-image: url('${slide.image}')">
+                        <div class="container h-100">
+                            <div class="row h-100 align-items-center">
+                                <div class="col-lg-6 hero-content">
+                                    <h1 class="text-white">${slide.title}</h1>
+                                    <p class="text-white lead">${slide.description}</p>
+                                    <a href="#reservation" class="btn btn-primary btn-lg">${slide.buttonText}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function showSlide(index) {
+                slider.innerHTML = createSlide(sliderData[index]);
+            }
+
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % sliderData.length;
+                showSlide(currentSlide);
+            }
+
+            showSlide(0);
+            setInterval(nextSlide, 5000);
+        }
+
+        // Khởi tạo menu
+        function initMenu() {
+            const menuContainer = document.querySelector("#menu .row");
+
+            menuData.forEach((item) => {
+                const menuItem = document.createElement("div");
+                menuItem.className = "col-md-4 menu-item fade-in";
+                menuItem.innerHTML = `
+                    <div class="card border-0">
+                        <img src="${item.image}" class="card-img-top" alt="${item.title}">
+                        <div class="card-body text-center">
+                            <span class="badge bg-primary mb-2">${item.category}</span>
+                            <h5 class="card-title">${item.title}</h5>
+                            <p class="card-text">${item.description}</p>
+                            <p class="price">${item.price}</p>
+                        </div>
+                    </div>
+                `;
+                menuContainer.appendChild(menuItem);
+            });
+        }
+
+        // Khởi tạo ưu đãi
+        function initPromotions() {
+            const promotionsContainer = document.querySelector("#promotions .row");
+
+            promotionData.forEach((promo) => {
+                const promoItem = document.createElement("div");
+                promoItem.className = "col-md-6 mb-4";
+                promoItem.innerHTML = `
+                    <div class="card promotion-card">
+                        <div class="card-body">
+                            <h5 class="card-title">${promo.title}</h5>
+                            <p class="card-text">${promo.description}</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <small class="text-muted">Mã: ${promo.code}</small>
+                                <small class="text-muted">Áp dụng đến: ${promo.validUntil}</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                promotionsContainer.appendChild(promoItem);
+            });
+        }
+
+        // Khởi tạo địa điểm
+        function initLocations() {
+            const locationsContainer = document.querySelector("#locations .row");
+
+            locationData.forEach((location) => {
+                const locationItem = document.createElement("div");
+                locationItem.className = "col-md-6 mb-4";
+                locationItem.innerHTML = `
+                    <div class="card location-card">
+                        <img src="${location.image}" class="card-img-top" alt="${location.name}">
+                        <div class="card-body">
+                            <h5 class="card-title">${location.name}</h5>
+                            <p class="card-text"><i class="fas fa-map-marker-alt"></i> ${location.address}</p>
+                            <p class="card-text"><i class="fas fa-phone"></i> ${location.phone}</p>
+                            <p class="card-text"><i class="fas fa-clock"></i> ${location.hours}</p>
+                            <a href="${location.mapUrl}" class="btn btn-outline-primary">Xem bản đồ</a>
+                        </div>
+                    </div>
+                `;
+                locationsContainer.appendChild(locationItem);
+            });
+        }
+
+        // Xử lý form đặt bàn
+        function initReservationForm() {
+            const form = document.getElementById("reservationForm");
+
+            form.addEventListener("submit", function (e) {
+                e.preventDefault();
+
+                // Lấy dữ liệu form
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+
+                // Hiển thị thông báo
+                const alertDiv = document.createElement("div");
+                alertDiv.className = "alert alert-success mt-3";
+                alertDiv.innerHTML = `
+                    <i class="fas fa-check-circle me-2"></i>
+                    Cảm ơn bạn đã đặt bàn! Chúng tôi sẽ liên hệ lại sớm nhất có thể.
+                `;
+                form.appendChild(alertDiv);
+
+                // Reset form
+                form.reset();
+
+                // Tự động ẩn thông báo sau 5 giây
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 5000);
+            });
+        }
+
+        // Scroll animations và header effect
+        function initScrollEffects() {
+            const navbar = document.querySelector(".navbar");
+            const elements = document.querySelectorAll(".fade-in");
+
+            // Header scroll effect
+            window.addEventListener("scroll", () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add("scrolled");
+                } else {
+                    navbar.classList.remove("scrolled");
+                }
+            });
+
+            // Intersection Observer cho animations
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = "1";
+                            entry.target.style.transform = "translateY(0)";
+                        }
+                    });
+                },
+                {
+                    threshold: 0.1,
+                }
+            );
+
+            elements.forEach((element) => {
+                element.style.opacity = "0";
+                element.style.transform = "translateY(30px)";
+                observer.observe(element);
+            });
+        }
+
+        // Khởi tạo tất cả các chức năng khi DOM đã tải xong
+        document.addEventListener("DOMContentLoaded", function () {
+            initSlider();
+            initMenu();
+            initPromotions();
+            initLocations();
+            initReservationForm();
+            initScrollEffects();
+        });
+
+    </script>
+}

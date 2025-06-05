@@ -1,215 +1,224 @@
-﻿@model CreateOrderRequest  
-@{
-    ViewData["Title"] = "Create Order";
-    ViewData["Message"] = "Create Order";
-	List<Dish> Dishes = ViewBag.Dishes;
-}
+﻿    @model CreateOrderRequest
+    @{
+        ViewData["Title"] = "Create Order";
+        ViewData["Message"] = "Create Order";
+        List<Dish> Dishes = ViewBag.Dishes;
+    }
 
-<div class="container py-4">
-    <h1 class="mb-4">Create New Order</h1>
+    <div class="container py-4">
+        <h1 class="mb-4">Create New Order</h1>
 
-    <div class="p-4 bg-light shadow-sm rounded">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <div class="p-4 bg-light shadow-sm rounded">
+            <form method="post" id="orderForm">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-            <h4 class="mb-3 border-bottom pb-2">1. Select Table</h4>
-            <div class="row mb-4">
-                <div class="col-md-6 mb-3">
-                    <label asp-for="TableId" class="form-label">Table Number</label>
-                    <select asp-for="TableId" id="tableSelect" class="form-select" asp-items="ViewBag.TablesSelect" required>
-                        <option value="">-- Select Table --</option>
-                    </select>
-                    <span asp-validation-for="TableId" class="text-danger"></span>
-                </div>
-            </div>
-
-            <h4 class="mb-3 border-bottom pb-2">2. Guest Information</h4>
-            <div class="row mb-4">
-                <div class="col-12 mb-3">
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="guestOption" id="existingGuest" value="existing" checked>
-                        <label class="form-check-label" for="existingGuest">Select Existing Guest</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="guestOption" id="newGuest" value="new">
-                        <label class="form-check-label" for="newGuest">Create New Guest</label>
+                <!-- 1. Table Selection -->
+                <h4 class="mb-3 border-bottom pb-2">1. Select Table</h4>
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="TableId" class="form-label">Table Number</label>
+                        <select asp-for="TableId" id="tableSelect" class="form-select" asp-items="ViewBag.TablesSelect" required>
+                            <option value="">-- Select Table --</option>
+                        </select>
+                        <span asp-validation-for="TableId" class="text-danger"></span>
                     </div>
                 </div>
 
-                <div class="col-md-6 mb-3" id="existingGuestSection">
-                    <label for="guestSelect" class="form-label">Select Guest</label>
+                <!-- 2. Guest Information -->
+                <h4 class="mb-3 border-bottom pb-2">2. Guest Information</h4>
+                <div class="row mb-4">
+                    <div class="col-12 mb-3">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="guestOption" id="existingGuest" value="existing" checked>
+                            <label class="form-check-label" for="existingGuest">Select Existing Guest</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="guestOption" id="newGuest" value="new">
+                            <label class="form-check-label" for="newGuest">Create New Guest</label>
+                        </div>
+                    </div>
+
+                    <!-- Existing Guest Section -->
+                    <div class="col-md-6 mb-3" id="existingGuestSection">
+                        <label for="guestSelect" class="form-label">Select Guest</label>
                     <select id="guestSelect" name="GuestId" class="form-select" asp-items="ViewBag.CumstomerSelect">
-                        <option value="">-- Select Guest --</option>
-                    </select>
-                    <span class="text-danger" id="guestSelectError"></span>
-                </div>
+                            <option value="">-- Select Guest --</option>
+                        </select>
+                        <span class="text-danger" id="guestSelectError"></span>
+                    </div>
 
-                <div class="col-md-12 mb-3 d-none" id="newGuestSection">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="NewGuestName" class="form-label">Guest Name</label>
-                                    <input type="text" id="NewGuestName" name="NewGuestName" class="form-control" placeholder="Enter guest name">
-                                    <span class="text-danger" id="newGuestNameError"></span>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="NewGuestPhone" class="form-label">Phone Number</label>
-                                    <input type="tel" id="NewGuestPhone" name="NewGuestPhone" class="form-control" placeholder="Enter phone number" maxlength="10">
-                                    <span class="text-danger" id="newGuestPhoneError"></span>
+                    <!-- New Guest Section -->
+                    <div class="col-md-12 mb-3 d-none" id="newGuestSection">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="NewGuestName" class="form-label">Guest Name <span class="text-danger">*</span></label>
+                                        <input type="text" id="NewGuestName" name="NewGuestName" class="form-control" placeholder="Enter guest name" maxlength="100">
+                                        <span class="text-danger" id="newGuestNameError"></span>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="NewGuestPhone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                                        <input type="tel" id="NewGuestPhone" name="NewGuestPhone" class="form-control" placeholder="Enter phone number" maxlength="15">
+                                        <span class="text-danger" id="newGuestPhoneError"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <h4 class="mb-3 border-bottom pb-2">3. Select Dishes</h4>
-            <div class="row mb-4">
-                @* <div class="col-12 mb-3">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-search"></i></span>
-                        <input type="text" id="dishSearchInput" class="form-control" placeholder="Search for dishes by name, category, or description">
-                    </div>
-                </div> *@
+                <!-- 3. Menu Selection -->
+                <h4 class="mb-3 border-bottom pb-2">3. Select Dishes</h4>
+                <div class="row mb-4">
 
-                <div class="col-12 mb-3">
-                    <div class="card">
-                        @* <div class="card-header bg-light">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <select id="categoryFilter" asp-items=@ViewBag.CategoriesSelect class="form-select form-select-sm">
-                                        <option value="">All Categories</option>
+                    <!-- Dishes Grid -->
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                @if (ViewBag.Dishes != null && Dishes.Count > 0)
+                                {
+                                    <div class="row" id="dishesContainer">
+                                        @for (var i = 0; i < Dishes.Count; i++)
+                                        {
+                                            <div class="col-lg-3 col-md-4 col-sm-6 mb-4 dish-item"
+                                                 data-name="@Dishes[i].Name.ToLower()"
+                                                 data-category="@Dishes[i].CategoryId"
+                                                 data-price="@Dishes[i].Price">
+                                                <div class="card h-100 dish-card">
+                                                    <div class="position-relative">
+                                                        <img src="@Dishes[i].Image" class="card-img-top" alt="@Dishes[i].Name"
+                                                             style="height: 180px; object-fit: cover;">
+                                                        <div class="position-absolute top-0 end-0 m-2">
+                                                            <span class="badge bg-primary">@string.Format("{0:C0}", Dishes[i].Price)</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-body d-flex flex-column">
+                                                        <h6 class="card-title mb-2">@Dishes[i].Name</h6>
+                                                        <p class="card-text small text-muted flex-grow-1">@Dishes[i].Description</p>
 
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <select id="priceFilter" class="form-select form-select-sm">
-                                        <option value="">All Prices</option>
-                                        <option value="low">Low to High</option>
-                                        <option value="high">High to Low</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div> *@
-                        <div class="card-body">
-                            @if (ViewBag.Dishes != null)
-                            {
-                                <div class="row" id="dishesContainer">
-                                    @for(var i = 0; i < Dishes.Count; i++)
-                                    {
-                                        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                                            <div class="card h-100">
-                                                <img src="@Dishes[i].Image" class="card-img-top" alt="${dish.name}" style="height: 150px; object-fit: cover;">
-                                                <div class="card-body">
-                                                    <h6 class="card-title">@Dishes[i].Name</h6>
-                                                    <input type="hidden" name="GuestOrder[@i].DishId" value="@Dishes[i].Id" />
-                                                    <p class="card-text small text-muted">@Dishes[i].Description</p>
-                                                    <span class="fw-bold">@string.Format("{0:C0}", Dishes[i].Price)</span>
-                                                    <div class="justify-content-between d-flex align-items-center ">
-                                                        <span onclick="decrementInputQuality()" class="btn btn-sm btn-primary">=</span>
-                                                        <input type="number" name="GuestOrder[@i].Quality" style="min-width: 50%" class="w-100 text-center" id="inputQuality" value="0" />
-                                                        <span onclick="incrementInputQuality()" class="btn btn-sm btn-primary">+</span>
+                                                        <!-- Hidden Fields -->
+                                                        <input type="hidden" name="GuestOrder[@i].DishId" value="@Dishes[i].Id" />
+
+                                                        <!-- Quantity Controls -->
+                                                        <div class="mt-auto">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <button type="button" class="btn btn-outline-secondary btn-sm quantity-btn"
+                                                                        onclick="decrementQuantity(@i)" data-action="decrement">
+                                                                    <i class="bi bi-dash"></i>
+                                                                </button>
+                                                            <input type="number" name="GuestOrder[@i].Quality"
+                                                                       class="form-control text-center quantity-input"
+                                                                       id="quantity_@i"
+                                                                       value="0"
+                                                                       min="0"
+                                                                       max="99"
+                                                                       style="max-width: 70px;"
+                                                                       onchange="updateQuantity(@i)">
+                                                                <button type="button" class="btn btn-outline-secondary btn-sm quantity-btn"
+                                                                        onclick="incrementQuantity(@i)" data-action="increment">
+                                                                    <i class="bi bi-plus"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    }
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-info text-center">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        No dishes available at the moment.
+                                    </div>
+                                }
+
+                                <!-- No Results Message -->
+                                <div id="noDishesMessage" class="alert alert-warning text-center d-none">
+                                    <i class="bi bi-search me-2"></i>
+                                    No dishes found matching your search criteria.
                                 </div>
-                            }
-                            else
-                            {
-                             <div id="noDishesMessage" class="alert alert-info d-none">
-                                <i class="bi bi-info-circle me-2"></i> No dishes found matching your criteria.
-                            </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            @*< h4 class="mb-3 border-bottom pb-2">4. Order Summary</h4>
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Selected Dishes</h5>
-                            <span class="badge bg-primary" id="totalItemsCount">0 items</span>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Dish</th>
-                                            <th>Price</th>
-                                            <th width="120">Quantity</th>
-                                            <th>Subtotal</th>
-                                            <th width="50">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="orderItemsContainer">
-                                        <tr id="noItemsRow">
-                                            <td colspan="5" class="text-center py-3">No items added to order yet</td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot class="table-light">
-                                        <tr>
-                                            <th colspan="3" class="text-end">Total:</th>
-                                            <th id="orderTotal">$0.00</th>
-                                            <th></th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div id="selectedDishesContainer">
-                <!-- Hidden inputs for selected dishes will be added here -->
-            </div> *@
-
-            <div class="d-flex justify-content-end mt-4">
-                <a asp-action="Orders" class="btn btn-secondary me-2">Cancel</a>
-                <button type="submit" id="submitOrderBtn" class="btn btn-primary">
-                    <i class="bi bi-save"></i> Create Order
-                </button>
-            </div>
-        </form>
+                @* <!-- 4. Order Summary -->
+                <div id="orderSummarySection" class="d-none">
+                    <h4 class="mb-3 border-bottom pb-2">4. Order Summary</h4>
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Selected Items</h5>
+                                    <span class="badge bg-primary" id="totalItemsCount">0 items</span>
+                                </div>
+                                <div class="card-body">
+                                    <div id="orderSummaryItems"></div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0">Total Amount:</h5>
+                                        <h5 class="mb-0 text-primary" id="orderTotal">$0.00</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+     *@
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Orders" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Orders
+                    </a>
+                    <button type="submit" id="submitOrderBtn" class="btn btn-primary btn-lg">
+                        <i class="bi bi-check-circle"></i> Create Order
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-@section Scripts {
+    @section Scripts {
+        <script>
+            // Dish data for calculations
+            const dishData = @Html.Raw(Json.Serialize(Dishes.Select(d => new { d.Id, d.Name, d.Price })));
 
-    <script>
-        document.querySelectorAll('input[name="guestOption"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                const isExisting = document.getElementById('existingGuest').checked;
-                document.getElementById('existingGuestSection').classList.toggle('d-none', !isExisting);
-                document.getElementById('newGuestSection').classList.toggle('d-none', isExisting);
-                
-                document.getElementById('guestSelectError').textContent = '';
-                document.getElementById('newGuestNameError').textContent = '';
-                document.getElementById('newGuestPhoneError').textContent = '';
+            // Guest option toggle
+            document.querySelectorAll('input[name="guestOption"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const isExisting = document.getElementById('existingGuest').checked;
+                    document.getElementById('existingGuestSection').classList.toggle('d-none', !isExisting);
+                    document.getElementById('newGuestSection').classList.toggle('d-none', isExisting);
+
+                    // Clear errors
+                    clearErrors();
+                });
             });
-        });
 
-        // Hangdler input quality
-		const inputQuality = document.querySelector('#inputQuality');
+            // Quantity control functions
+            function incrementQuantity(index) {
+                const input = document.getElementById(`quantity_${index}`);
+                const currentValue = parseInt(input.value) || 0;
+                if (currentValue < 99) {
+                    input.value = currentValue + 1;
+                }
+            }
 
-        const incrementInputQuality = () => {
-			inputQuality.value = parseInt(inputQuality.value) + 1;
+            function decrementQuantity(index) {
+                const input = document.getElementById(`quantity_${index}`);
+                const currentValue = parseInt(input.value) || 0;
+                if (currentValue > 0) {
+                    input.value = currentValue - 1;
+                }
+            }
+
+       
+        </script>
+
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
         }
-
-        const decrementInputQuality = () => {
-            if (parseInt(inputQuality.value) > 0) {
-				inputQuality.value = parseInt(inputQuality.value) - 1;
-			}
-        }
-</script>
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+    }   

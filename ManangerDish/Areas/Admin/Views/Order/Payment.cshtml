@@ -1,0 +1,325 @@
+﻿@model PaymentRequest
+@{
+    ViewData["Title"] = "Thanh Toán";
+}
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-0">
+                        <i class="bi bi-credit-card-fill text-success me-2"></i>
+                        Thanh Toán Hóa Đơn
+                    </h2>
+                    <p class="text-muted mb-0">Bàn @Model.Order.Table?.Number - Đơn hàng #@Model.Order.Id</p>
+                </div>
+                <div>
+                    <a href="@Url.Action("Orders", "Order")" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>
+                        Quay lại
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Order Details Section -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-receipt me-2"></i>
+                        Chi Tiết Hóa Đơn
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Guest Information -->
+                    <div class="mb-4">
+                        <h6 class="text-muted mb-3">Thông tin khách hàng</h6>
+                        <div class="row">
+                            @if (Model.Order.Guests?.Any() == true)
+                            {
+                                @foreach (var guest in Model.Order.Guests)
+                                {
+                                    <div class="col-md-6 mb-2">
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-person-circle text-primary me-2"></i>
+                                            <div>
+                                                <strong>@guest.Name</strong>
+                                                <small class="text-muted d-block">@guest.PhoneNumber</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="col-12">
+                                    <div class="text-muted">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        Không có thông tin khách hàng
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Order Items -->
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-3">Danh sách món ăn</h6>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Món ăn</th>
+                                        <th>Đơn giá</th>
+                                        <th>Số lượng</th>
+                                        <th>Trạng thái</th>
+                                        <th class="text-end">Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.Order.OrderDetails?.Any() == true)
+                                    {
+                                        @foreach (var detail in Model.Order.OrderDetails)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        @if (!string.IsNullOrEmpty(detail.Dish?.Image))
+                                                        {
+                                                            <img src="@detail.Dish.Image" alt="@detail.Dish.Name"
+                                                                 class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center"
+                                                                 style="width: 40px; height: 40px;">
+                                                                <i class="bi bi-image text-muted"></i>
+                                                            </div>
+                                                        }
+                                                        <div>
+                                                            <strong>@detail.Dish?.Name</strong>
+                                                            @if (!string.IsNullOrEmpty(detail.Dish?.Description))
+                                                            {
+                                                                <small class="text-muted d-block">@detail.Dish.Description</small>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>@((detail.Dish?.Price ?? 0).ToString("C0", new System.Globalization.CultureInfo("vi-VN")))</td>
+                                                <td>
+                                                    <span class="badge bg-secondary">@detail.Quantity</span>
+                                                </td>
+                                                <td>
+                                                    @switch (detail.Status)
+                                                    {
+                                                        case ManagerDish.Models.Enum.OrderStatus.Pending:
+                                                            <span class="badge bg-warning text-dark">Chờ xử lý</span>
+                                                            break;
+                                                        case ManagerDish.Models.Enum.OrderStatus.Processing:
+                                                            <span class="badge bg-info">Đang chuẩn bị</span>
+                                                            break;
+                                                        case ManagerDish.Models.Enum.OrderStatus.Completed:
+                                                            <span class="badge bg-success">Đã phục vụ</span>
+                                                            break;
+                                                        case ManagerDish.Models.Enum.OrderStatus.Cancelled:
+                                                            <span class="badge bg-danger">Đã hủy</span>
+                                                            break;
+                                                    }
+                                                </td>
+                                                <td class="text-end">
+                                                    <strong>@(((detail.Dish?.Price ?? 0) * detail.Quantity).ToString("C0", new System.Globalization.CultureInfo("vi-VN")))</strong>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="5" class="text-center text-muted py-4">
+                                                <i class="bi bi-inbox display-4 d-block mb-2"></i>
+                                                Không có món ăn nào trong đơn hàng
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Section -->
+        <div class="col-lg-4">
+            <!-- Payment Summary -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-calculator me-2"></i>
+                        Tổng Kết Thanh Toán
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @* <div class="d-flex justify-content-between mb-2">
+                        <span>Tạm tính:</span>
+                        <span id="subtotal">@Model.Subtotal.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Thuế VAT (10%):</span>
+                        <span id="tax">@Model.Tax.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Phí phục vụ (5%):</span>
+                        <span id="serviceCharge">@Model.ServiceCharge.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Giảm giá:</span>
+                        <span id="discount" class="text-danger">-@Model.Discount.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</span>
+                    </div>
+                    <hr> *@
+                    <div class="d-flex justify-content-between mb-3">
+                        <strong class="fs-5">Tổng cộng:</strong>
+                        <strong class="fs-5 text-success" id="totalAmount">@Model.TotalAmount.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</strong>
+                    </div>
+
+                    @* <!-- Discount Input -->
+                    <div class="mb-3">
+                        <label for="discountInput" class="form-label">Giảm giá (VNĐ)</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="discountInput"
+                                   value="@Model.Discount" min="0" max="@Model.Subtotal"
+                                   placeholder="Nhập số tiền giảm giá">
+                            <button class="btn btn-outline-secondary" type="button" id="applyDiscountBtn">
+                                <i class="bi bi-check-lg"></i>
+                            </button>
+                        </div>
+                    </div> *@
+                </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="bi bi-credit-card me-2"></i>
+                        Phương Thức Thanh Toán
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form id="paymentForm" method="post" asp-action="ProcessPayment">
+                        <input type="hidden" name="OrderId" value="@Model.Order.Id" />
+                        <input type="hidden" name="Amount" id="finalAmount" value="@Model.TotalAmount" />
+
+                        <div class="mb-3">
+                            <div class="form-check mb-2">
+                                <label class="form-check-label" for="cashPayment">
+                                    <i class="bi bi-cash-stack text-success me-2"></i>
+                                    Tiền mặt
+                                </label>
+                            </div>
+                            @* <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="PaymentMethod"
+                                       id="cardPayment" value="Card">
+                                <label class="form-check-label" for="cardPayment">
+                                    <i class="bi bi-credit-card text-primary me-2"></i>
+                                    Thẻ tín dụng/Ghi nợ
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="PaymentMethod"
+                                       id="digitalPayment" value="Digital">
+                                <label class="form-check-label" for="digitalPayment">
+                                    <i class="bi bi-phone text-info me-2"></i>
+                                    Ví điện tử (Momo, ZaloPay, VNPay)
+                                </label>
+                            </div> *@
+                        </div>
+
+                        <!-- Cash Payment Details -->
+                        <div id="cashDetails" class="payment-details">
+                            <div class="mb-3">
+                                <label for="receivedAmount" class="form-label">Số tiền khách đưa</label>
+                                <input type="number" class="form-control" id="receivedAmount"
+                                       placeholder="Nhập số tiền nhận được" min="@Model.TotalAmount">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tiền thừa</label>
+                                <div class="form-control bg-light" id="changeAmount">0 ₫</div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-success w-100 mb-2" id="processPaymentBtn">
+                                <i class="bi bi-check-circle me-2"></i>
+                                Xác Nhận Thanh Toán
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Payment Status -->
+            @if (Model.Order.Paid)
+            {
+                <div class="card shadow-sm border-success">
+                    <div class="card-body text-center">
+                        <i class="bi bi-check-circle-fill text-success display-4 mb-2"></i>
+                        <h5 class="text-success">Đã Thanh Toán</h5>
+                        <p class="text-muted mb-0">Hóa đơn đã được thanh toán thành công</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Payment Success Modal -->
+<div class="modal fade" id="paymentSuccessModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    Thanh Toán Thành Công
+                </h5>
+            </div>
+            <div class="modal-body text-center py-4">
+                <i class="bi bi-check-circle-fill text-success display-1 mb-3"></i>
+                <h4>Cảm ơn quý khách!</h4>
+                <p class="text-muted">Hóa đơn đã được thanh toán thành công</p>
+                <div class="mt-3">
+                    <strong>Mã đơn hàng: #<span id="orderIdSuccess"></span></strong>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="printReceipt()">
+                    <i class="bi bi-printer me-1"></i>
+                    In Hóa Đơn
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+            const receivedAmount = document.querySelector("#receivedAmount");
+        const changeAmount = document.querySelector("#changeAmount");
+
+        receivedAmount.addEventListener("input", (e) => {
+            const received = parseInt(e.target.value || 0, 10);
+            const total = @Model.TotalAmount;
+            const change = received - total;
+
+            const formatted = new Intl.NumberFormat('vi-VN').format(change > 0 ? change : 0);
+            changeAmount.textContent = `${formatted} ₫`;
+        });
+    </script>
+}

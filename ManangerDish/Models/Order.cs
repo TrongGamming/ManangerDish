@@ -17,6 +17,9 @@ namespace ManagerDish.Models
         public bool Paid { get; set; } = false;
         public int Total { get; set; } = 0;
 
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+
         public virtual IEnumerable<OrderDetail>? OrderDetails { get; set; } 
         public virtual IEnumerable<Guest>? Guests { get; set; } = new List<Guest>();
 

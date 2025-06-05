@@ -26,7 +26,7 @@
         <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3">
             @foreach (var item in inforOrder)
             {
-                <div class="col">
+                <a asp-action="Payment" asp-route-id="@item.OrderId" class="col">
                     <div class="card h-100 bg-white rounded shadow-sm  transition">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -73,7 +73,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
             }
         </div>
     </div>
@@ -164,9 +164,6 @@
                         </form>
                         <div class="col-lg-2">
                             <div class="d-flex justify-content-around">
-                                <a href="@Url.Action("DetailsOrder", "Order", new { id = item.Id })" class="btn btn-sm btn-outline-info">
-                                    <i class="bi bi-info-circle"></i>
-                                </a>
                                 <a href="@Url.Action("EditOrder", "Order", new { id = item.Id })" class="btn btn-sm btn-outline-primary">
                                     <i class="bi bi-pencil-square"></i>
                                 </a>
@@ -219,9 +216,6 @@
                         </div>
 
                         <div class="d-flex justify-content-end gap-2">
-                            <a href="@Url.Action("DetailsOrder", "Order", new { id = item.Id })" class="btn btn-sm btn-outline-info">
-                                <i class="bi bi-info-circle me-1"></i> Details
-                            </a>
                             <a href="@Url.Action("EditOrder", "Order", new { id = item.Id })" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-pencil-square me-1"></i> Edit
                             </a>

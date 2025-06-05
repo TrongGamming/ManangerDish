@@ -21,11 +21,18 @@ namespace ManagerDish.Areas.Guest.Controllers
         {
             ViewBag.Name = User.Identity.Name;
             ViewBag.RoleName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
-            if (User.Identity.IsAuthenticated)
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            switch (role)
             {
-                return RedirectToAction("Accounts", "Account", new { area = "Admin" });
-            }   
-                return View();
+                case "Admin":
+                    return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                case "Staff":
+                    return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                case "Kitchen":
+                    return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                default:
+                    return View();
+            }
         }
         [Authorize]
         public IActionResult Privacy()

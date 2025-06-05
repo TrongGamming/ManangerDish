@@ -29,6 +29,14 @@ body {
     display: none;
 }
 
+.sidebar__item.active {
+    background-color: #1e40afc4;
+}
+
+.sidebar__item.active * {
+    color: white !important;
+}
+
 @media screen and (max-width: 767px) {
     .mainContent {
         width: calc(100% - 61.5px) !important;

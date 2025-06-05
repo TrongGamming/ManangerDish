@@ -124,6 +124,7 @@ namespace ManagerDish.Areas.Admin.Controllers
                 Value = c.Id.ToString(),
                 Text = c.Name
             }).ToList();
+            ViewBag.Id = id;
             return View(request);
         }
 

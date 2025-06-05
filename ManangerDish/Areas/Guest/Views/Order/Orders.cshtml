@@ -1,0 +1,166 @@
+﻿@model List<OrderDetail>
+
+<div class="mb-4">
+    <button class="btn btn-outline-secondary w-100 mb-3 d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="false" aria-controls="filterCollapse">
+        <i class="bi bi-funnel-fill me-2"></i> Show Filter Options
+    </button>
+
+    <form method="get">
+        <div class="collapse d-md-block" id="filterCollapse">
+            <div class="p-4 bg-light rounded shadow-sm mb-3">
+                <h5 class="mb-3 border-bottom pb-2">Filter Orders</h5>
+
+                <div class="row g-3">
+                    <div class="col-12 col-md-4">
+                        <label for="statusFilter" class="form-label">Status</label>
+                        <select asp-items="@Html.GetEnumSelectList<OrderStatus>()" class="form-select" id="statusFilter" name="Status">
+                            <option value="">---- All ----</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label for="searchInput" class="form-label">Search</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" id="searchInput" name="q" placeholder="Search by dish, guest or table" value="@ViewBag.search">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-12 col-md-6 mb-2 mb-md-0">
+                        <button class="btn btn-primary w-100" type="submit">
+                            <i class="bi bi-funnel-fill me-2"></i> Apply Filters
+                        </button>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <a href="@Url.Action("Orders", "Order")" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-x-circle me-2"></i> Clear Filters
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="bg-light p-4 shadow-sm rounded">
+    <h5 class="mb-3 border-bottom pb-2">Order Details</h5>
+
+    <div class="row fw-bold pb-2 border-bottom d-none d-lg-flex text-center mb-3">
+        <div class="col-lg-2">Guest Name</div>
+        <div class="col-lg-2">Table Number</div>
+        <div class="col-lg-3">Dish</div>
+        <div class="col-lg-1">Handler</div>
+        <div class="col-lg-2">Status</div>
+    </div>
+
+    @foreach (var item in Model)
+    {
+        <div class="card mb-3 shadow-sm  transition">
+            <div class="card-body">
+                <div class="row d-none d-lg-flex align-items-center text-center">
+                    <div class="col-lg-2">@(item.Guest?.Name ?? "Null")</div>
+                    <div class="col-lg-2">@(item.Order?.Table?.Number)</div>
+                    <div class="col-lg-3">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <img src="@(item.Dish.Image)" width="50" height="50" class="rounded me-3" style="object-fit: cover" alt="@item.Dish.Name" />
+                            <div class="text-start">
+                                <p class="mb-0"><strong>@item.Dish.Name</strong></p>
+                                <p class="mb-0">@string.Format("{0:C0}", item.Dish.Price) × @item.Quantity = @string.Format("{0:C0}", item.Dish.Price * item.Quantity)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-1">@(item.Handler?.Name ?? "Null")</div>
+                    <div class="formChangeStatusOrder col-lg-2">
+                        <input name="Status" disabled asp-for="@item.Status"  class="form-control"/>
+                    </div>
+                </div>
+
+                <div class="d-lg-none">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="@item.Dish.Image" width="60" height="60" class="rounded me-3" style="object-fit: cover" alt="@item.Dish.Name" />
+                        <div>
+                            <h5 class="mb-0">@item.Dish.Name</h5>
+                            <p class="mb-0">@string.Format("{0:C0}", item.Dish.Price) × @item.Quantity</p>
+                            <p class="text-primary fw-bold mb-0">@string.Format("{0:C0}", item.Dish.Price * item.Quantity)</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 g-2">
+                        <div class="col-6">
+                            <div class="bg-light p-2 rounded">
+                                <small class="text-muted d-block">Guest</small>
+                                <strong>@(item.Guest?.Name ?? "Null")</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="bg-light p-2 rounded">
+                                <small class="text-muted d-block">Table</small>
+                                <strong>@(item.Order?.Table?.Number)</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="bg-light p-2 rounded">
+                                <small class="text-muted d-block">Handler</small>
+                                <strong>@(item.Handler?.Name ?? "Null")</strong>
+                            </div>
+                        </div>
+                        <div class="formChangeStatusOrder col-6">
+                            <div class="bg-light p-2 rounded">
+                                <small class="text-muted d-block">Status</small>
+                                <input name="Status" disabled asp-for="@item.Status" class="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Pagination -->
+    <div class="mt-4 d-flex justify-content-center">
+        <pagination page-model="@ViewBag.Model"></pagination>
+    </div>
+</div>
+  @section Scripts {
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.0/signalr.min.js"></script>
+    <script>
+        const tableId = @ViewBag.TableId;
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/OrderHub")
+            .build();
+
+        connection.on("Refresh", function (message) {
+            window.location.reload();
+        });
+
+        connection.on("Logout", function (message) {
+            window.location.reload();
+			fetch("/Guest/Order/Logout", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				}
+			}).then(response => {
+				if (response.ok) {
+					window.location.href = "/";
+				} else {
+					console.error("Logout failed");
+				}
+			}).catch(error => {
+				console.error("Error during logout: ", error);
+			});
+        });
+
+        connection.start().then(function () {
+            console.log("Connected to SignalR Hub");
+            connection.invoke("AddToGroup", tableId.toString()).catch(function (err) {
+                console.error(`Error invoking AddToGroup for table ${tableId}: `, err.toString());  
+            })
+        }).catch(function (err) {
+            console.error("Error connecting to SignalR: ", err.toString());
+        });
+    </script>
+  }

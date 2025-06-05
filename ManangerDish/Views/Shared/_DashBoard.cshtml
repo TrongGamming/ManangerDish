@@ -17,36 +17,44 @@
             <h3 class="text-center sidebar__heading  mt-4">Admin</h3>
             <label for="sidebar__check" class="sidebar__label m-0"><i class="bi bi-list p-3 sidebar__icon fs-3 ms-2"></i></label>
             <ul class="list-unstyled">
-                <li class="">
-                    <a asp-area="Admin" asp-controller="Account" asp-action="Accounts" class="text-decoration-none text-dark p-3 d-flex align-items-center">
-                        <i class="bi text-primary px-2 fs-3 me-3 bi-person-vcard-fill"></i> Accounts
+                <li class="sidebar__item @(ViewContext.RouteData.Values["Controller"].ToString() == "DashBoard" ? "active" : "")">
+                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="text-decoration-none text-dark p-3 d-flex align-items-center">
+                        <i class="bi text-primary px-2 fs-3 me-3 bi-clock-fill"></i> Dashboard
                     </a>
                 </li>
-                <li class="">
+                @if (User.IsInRole("Admin"))
+                {
+                    <li class="sidebar__item @(ViewContext.RouteData.Values["Controller"].ToString() == "Account" ? "active" : "")">
+                        <a asp-area="Admin" asp-controller="Account" asp-action="Accounts" class="text-decoration-none text-dark p-3 d-flex align-items-center">
+                            <i class="bi text-primary px-2 fs-3 me-3 bi-person-vcard-fill"></i> Accounts
+                        </a>
+                    </li>
+                }
+                <li class="sidebar__item @(ViewContext.RouteData.Values["Controller"].ToString() == "Dish" ? "active" : "")">
                     <a asp-area="Admin" asp-controller="Dish" asp-action="Dishes" class="text-decoration-none text-dark p-3 d-flex align-items-center">
                         <i class="bi px-2 fs-3 me-3 text-primary bi-egg-fill"></i> Dishes
                     </a>
                 </li>
-                <li class="">
+                <li class="sidebar__item @(ViewContext.RouteData.Values["Controller"].ToString() == "Order" ? "active" : "")">
                     <a asp-area="Admin" asp-controller="Order" asp-action="Orders" class="text-decoration-none p-3 text-dark d-flex align-items-center">
                         <i class="bi px-2 fs-3 me-3 text-primary bi-journal-bookmark"></i> Orders
                     </a>
                 </li>
-                <li class="">
+                <li class="sidebar__item @(ViewContext.RouteData.Values["Controller"].ToString() == "Table" ? "active" : "")">
                     <a asp-area="Admin" asp-controller="Table" asp-action="Tables" class="text-decoration-none p-3 text-dark d-flex align-items-center">
                         <i class="bi px-2 fs-3 me-3 bi-table text-primary"></i> Tables
                     </a>
                 </li>
-                <li class="">
+                <li class="sidebar__item @(ViewContext.RouteData.Values["Controller"].ToString() == "Category" ? "active" : "")">
                     <a asp-area="Admin" asp-controller="Category" asp-action="Categories" class="text-decoration-none p-3 text-dark d-flex align-items-center">
                         <i class="bi px-2 fs-3 me-3 bi-funnel-fill text-primary"></i> Categories
                     </a>
-                </li>
-                <li class="">
+                </li>@* 
+                <li class="sidebar__item @(ViewContext.RouteData.Values["Controller"].ToString() == "Guest" ? "active" : "")">
                     <a asp-area="Admin" asp-controller="Guest" asp-action="Customers" class="text-decoration-none p-3 text-dark d-flex align-items-center">
                         <i class="bi px-2 fs-3 me-3 text-primary bi-person-lines-fill"></i> Customers
                     </a>
-                </li>
+                </li> *@
             </ul>
         </aside>
 

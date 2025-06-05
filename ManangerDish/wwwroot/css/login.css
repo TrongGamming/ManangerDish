@@ -1,0 +1,76 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600&display=swap');
+
+body {
+    margin: 0;
+    font-family: 'Noto Serif SC', serif;
+    background: url('https://images.unsplash.com/photo-1604908177527-5001b5e07a15') no-repeat center center/cover;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-container {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 30px rgba(255, 198, 0, 0.4);
+    width: 350px;
+    color: #fff;
+}
+
+.login-box h1 {
+    color: #FFD700;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 0.9em;
+    margin-bottom: 30px;
+}
+
+form input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+    form input:focus {
+        outline: 2px solid #FFD700;
+    }
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #C21807;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    button:hover {
+        background-color: #a20e00;
+    }
+
+.note {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.85em;
+}
+
+    .note a {
+        color: #FFD700;
+        text-decoration: none;
+    }
+
+.text-danger{
+    color: red !important;
+}

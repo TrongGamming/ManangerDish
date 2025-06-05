@@ -1,0 +1,22 @@
+﻿@model GuestRequest
+@{
+	Layout = "_Layout";
+}
+
+<div class="container">
+	<form class="m-auto d-flex flex-column align-items-center" method="post">
+		@Html.AntiForgeryToken()
+		<input type="hidden" name="token" value="@ViewBag.Token" />
+		<div class="mb-3 col-6">
+			<label asp-for="Name" class="form-label">Name</label>
+			<input type="text" class="form-control" asp-for="Name" />
+			<span class="text-danger" asp-validation-for="Name"></span>
+		</div>
+		<div class="mb-3 col-6">
+			<label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+			<input class="form-control" asp-for="PhoneNumber" />
+			<span class="text-danger" asp-validation-for="PhoneNumber"></span>
+		</div>
+		<button class="btn btn-primary">Enter</button>
+	</form>
+</div>

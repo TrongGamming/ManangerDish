@@ -17,10 +17,11 @@
             <h5 class="mb-0">Dish Information</h5>
         </div>
         <div class="card-body">
-            <form asp-action="Edit" method="post" enctype="multipart/form-data">
-                <input name="Id" type="hidden" />
+            <form asp-action="EditDish" method="post" enctype="multipart/form-data">
+                <input name="Id" type="hidden" value="@ViewBag.Id"/>
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
                 <input type="hidden" name="CurrentImage" value="@Model.Image" />
+                <input type="hidden" name="ImagePath" value="@Model.ImagePath" />
 
                 <div class="row">
                     <div class="col-md-6 mb-3">

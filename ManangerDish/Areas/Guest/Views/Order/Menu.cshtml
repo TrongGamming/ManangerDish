@@ -1,0 +1,181 @@
+﻿@model CreateOrderRequest
+@{
+    ViewData["Title"] = "Create Order";
+    ViewData["Message"] = "Create Order";
+    List<Dish> Dishes = ViewBag.Dishes;
+}
+
+<div class="container py-4">
+    <h1 class="mb-4">Create New Order</h1>
+
+    <div class="p-4 bg-light shadow-sm rounded">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <!-- 3. Menu Selection -->
+            <h4 class="mb-3 border-bottom pb-2">Select Dishes</h4>
+            <div class="row mb-4">
+                <!-- Search and Filter -->
+                <form method="get" class="col-12 mb-3">
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" name="q" id="dishSearchInput" class="form-control" placeholder="Search dishes...">
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                        <select id="categoryFilter" name="categoryFilter" asp-items="ViewBag.CategoriesSelect" class="form-select">
+                                <option value="">All Categories</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <select name="priceFilter" id="priceFilter" class="form-select">
+                                <option value="">Sort by Price</option>
+                                <option value="asc">Price: Low to High</option>
+                                <option value="desc">Price: High to Low</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit">Apply</button>
+                </form>
+                <form method="post" id="orderForm">
+                <!-- Dishes Grid -->
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            @if (ViewBag.Dishes != null && Dishes.Count > 0)
+                            {
+                                <div class="row" id="dishesContainer">
+                                    @for (var i = 0; i < Dishes.Count; i++)
+                                    {
+                                        <div class="col-lg-3 col-md-4 col-sm-6 mb-4 dish-item">
+                                            <div class="card h-100 dish-card">
+                                                <div class="position-relative">
+                                                    <img src="@Dishes[i].Image" class="card-img-top" alt="@Dishes[i].Name"
+                                                         style="height: 180px; object-fit: cover;">
+                                                    <div class="position-absolute top-0 end-0 m-2">
+                                                        <span class="badge bg-primary">@string.Format("{0:C0}", Dishes[i].Price)</span>
+                                                    </div>
+                                                </div>
+                                                <div class="card-body d-flex flex-column">
+                                                    <h6 class="card-title mb-2">@Dishes[i].Name</h6>
+                                                    <p class="card-text small text-muted flex-grow-1">@Dishes[i].Description</p>
+
+                                                    <!-- Hidden Fields -->
+                                                    <input type="hidden" name="GuestOrder[@i].DishId" value="@Dishes[i].Id" />
+
+                                                    <!-- Quantity Controls -->
+                                                    <div class="mt-auto">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <button type="button" class="btn btn-outline-secondary btn-sm quantity-btn"
+                                                                    onclick="decrementQuantity(@i)" data-action="decrement">
+                                                                <i class="bi bi-dash"></i>
+                                                            </button>
+                                                            <input type="number" name="GuestOrder[@i].Quality"
+                                                                   class="form-control text-center quantity-input"
+                                                                   id="quantity_@i"
+                                                                   value="0"
+                                                                   min="0"
+                                                                   max="99"
+                                                                   style="max-width: 70px;">
+                                                            <button type="button" class="btn btn-outline-secondary btn-sm quantity-btn"
+                                                                    onclick="incrementQuantity(@i)" data-action="increment">
+                                                                <i class="bi bi-plus"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                </div>
+                                <pagination page-model="@ViewBag.Model"></pagination>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info text-center">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    No dishes available at the moment.
+                                </div>
+                            }
+
+                            <!-- No Results Message -->
+                            <div id="noDishesMessage" class="alert alert-warning text-center d-none">
+                                <i class="bi bi-search me-2"></i>
+                                No dishes found matching your search criteria.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-action="Orders" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Orders
+                </a>
+                <button type="submit" id="submitOrderBtn" class="btn btn-primary btn-lg">
+                    <i class="bi bi-check-circle"></i> Create Order
+                </button>
+            </div>
+            </form>
+            </div>
+
+            
+    </div>
+</div>
+
+@section Scripts {
+
+    <script>
+        const tableId = @ViewBag.TableId;
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/OrderHub")
+            .build();
+
+        connection.on("Logout", function (message) {
+            window.location.reload();
+            fetch("/Guest/Order/Logout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = "/";
+                } else {
+                    console.error("Logout failed");
+                }
+            }).catch(error => {
+                console.error("Error during logout: ", error);
+            });
+        });
+
+        connection.start().then(function () {
+            console.log("Connected to SignalR Hub");
+            connection.invoke("AddToGroup", tableId.toString()).catch(function (err) {
+                console.error(`Error invoking AddToGroup for table ${tableId}: `, err.toString());
+            })
+        }).catch(function (err) {
+            console.error("Error connecting to SignalR: ", err.toString());
+        });
+
+        const decrementQuantity = (i) => {
+			const quantityInput = document.getElementById(`quantity_${i}`);
+			let quantity = parseInt(quantityInput.value) || 0;
+			if (quantity > 0) {
+				quantity--;
+				quantityInput.value = quantity;
+			}
+        }
+		const incrementQuantity = (i) => {
+			const quantityInput = document.getElementById(`quantity_${i}`);
+            let quantity = parseInt(quantityInput.value) || 0;
+			if (quantity < 99) {
+                quantity++;
+				quantityInput.value = quantity;
+            }
+        }
+
+
+    </script>
+}

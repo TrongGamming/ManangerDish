@@ -1,0 +1,407 @@
+﻿@{
+    ViewData["Title"] = "Dashboard - Statistics";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-0">
+                <i class="bi bi-bar-chart-fill text-primary me-2"></i>
+                Dashboard Statistics
+            </h2>
+            <p class="text-muted">Thống kê món ăn yêu thích và doanh số</p>
+        </div>
+    </div>
+
+    <!-- Date Range Filter -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-calendar-range text-primary me-2"></i>
+                        Lọc theo thời gian
+                    </h5>
+                    <form id="dateRangeForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="startDate" class="form-label">Từ ngày</label>
+                                <input type="date" class="form-control" id="startDate" name="startDate" value="@DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd")">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="endDate" class="form-label">Đến ngày</label>
+                                <input type="date" class="form-control" id="endDate" name="endDate" value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-search me-1"></i>
+                                Cập nhật thống kê
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-info-circle text-info me-2"></i>
+                        Tổng quan
+                    </h5>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="border-end">
+                                <h4 class="text-primary mb-0" id="totalOrders">0</h4>
+                                <small class="text-muted">Đơn hàng</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border-end">
+                                <h4 class="text-success mb-0" id="totalRevenue">0₫</h4>
+                                <small class="text-muted">Doanh thu</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <h4 class="text-warning mb-0" id="avgOrderValue">0₫</h4>
+                            <small class="text-muted">TB/Đơn</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row">
+        <!-- Top 5 Favorite Dishes Chart -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-trophy-fill me-2"></i>
+                        Top 5 Món Ăn Yêu Thích
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="position-relative" style="height: 400px;">
+                        <canvas id="favoriteDishesChart"></canvas>
+                    </div>
+                    <div class="text-center mt-3">
+                        <small class="text-muted">Thống kê theo số lượng order</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue Trend Chart -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-graph-up me-2"></i>
+                        Biểu Đồ Doanh Số
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="position-relative" style="height: 400px;">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                    <div class="text-center mt-3">
+                        <small class="text-muted">Doanh thu theo ngày (VNĐ)</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="position-fixed top-0 start-0 w-100 h-100 d-none" style="background: rgba(0,0,0,0.5); z-index: 9999;">
+        <div class="d-flex justify-content-center align-items-center h-100">
+            <div class="text-center text-white">
+                <div class="spinner-border text-light" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="mt-2">Đang tải dữ liệu...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let favoriteDishesChart;
+        let revenueChart;
+
+        // Initialize charts when document is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+            loadData();
+
+            // Handle form submission
+            document.getElementById('dateRangeForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                loadData();
+            });
+        });
+
+        function initializeCharts() {
+            // Initialize Favorite Dishes Chart (Horizontal Bar)
+            const favCtx = document.getElementById('favoriteDishesChart').getContext('2d');
+            favoriteDishesChart = new Chart(favCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Số lượng order',
+                        data: [],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 205, 86, 0.8)',
+                            'rgba(75, 192, 192, 0.8)',
+                            'rgba(153, 102, 255, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 205, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', // This makes it horizontal
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.parsed.x} lượt order`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                maxTicksLimit: 5
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Initialize Revenue Chart (Line)
+            const revCtx = document.getElementById('revenueChart').getContext('2d');
+            revenueChart = new Chart(revCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: [],
+                        borderColor: 'rgba(40, 167, 69, 1)',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgba(40, 167, 69, 1)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.parsed.y.toLocaleString('vi-VN')} VNĐ`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString('vi-VN') + ' VNĐ';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadData() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            showLoading(true);
+
+            // Load favorite dishes data
+            fetch(`/Admin/Dashboard/GetFavoriteDishes?startDate=${startDate}&endDate=${endDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    updateFavoriteDishesChart(data);
+                })
+                .catch(error => {
+                    console.error('Error loading favorite dishes:', error);
+                    showErrorMessage('Không thể tải dữ liệu món ăn yêu thích');
+                });
+            fetch(`/Admin/Dashboard/GetRevenueData?startDate=${startDate}&endDate=${endDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    updateRevenueChart(data.dailyRevenue);
+                    updateOverviewStats(data.overview);
+                })
+                .catch(error => {
+                    console.error('Error loading revenue data:', error);
+                    showErrorMessage('Không thể tải dữ liệu doanh thu');
+                })
+                .finally(() => {
+                    showLoading(false);
+                });
+        }
+
+        function updateFavoriteDishesChart(data) {
+            const labels = data.map(item => item.dishName);
+            const values = data.map(item => item.orderCount);
+
+            favoriteDishesChart.data.labels = labels;
+            favoriteDishesChart.data.datasets[0].data = values;
+            favoriteDishesChart.update();
+        }
+
+        function updateRevenueChart(data) {
+            const labels = data.map(item => {
+                const date = new Date(item.date);
+                return date.toLocaleDateString('vi-VN');
+            });
+            const values = data.map(item => item.revenue);
+
+            revenueChart.data.labels = labels;
+            revenueChart.data.datasets[0].data = values;
+            revenueChart.update();
+        }
+
+        function updateOverviewStats(overview) {
+            document.getElementById('totalOrders').textContent = overview.totalOrders.toLocaleString('vi-VN');
+            document.getElementById('totalRevenue').textContent = overview.totalRevenue.toLocaleString('vi-VN') + '₫';
+            document.getElementById('avgOrderValue').textContent = overview.avgOrderValue.toLocaleString('vi-VN') + '₫';
+        }
+
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (show) {
+                overlay.classList.remove('d-none');
+            } else {
+                overlay.classList.add('d-none');
+            }
+        }
+
+        function showErrorMessage(message) {
+            // Simple error handling - you can enhance this with better UI
+            alert(message);
+        }
+
+        // Sample data for demonstration (remove when implementing real API)
+        function loadSampleData() {
+            // Sample favorite dishes data
+            const sampleFavoriteDishes = [
+                { dishName: 'Phở Bò', orderCount: 45 },
+                { dishName: 'Bún Chả', orderCount: 38 },
+                { dishName: 'Cơm Tấm', orderCount: 32 },
+                { dishName: 'Bánh Mì', orderCount: 28 },
+                { dishName: 'Chả Cá', orderCount: 22 }
+            ];
+
+            // Sample revenue data
+            const sampleRevenueData = [];
+            const today = new Date();
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                sampleRevenueData.push({
+                    date: date.toISOString().split('T')[0],
+                    revenue: Math.floor(Math.random() * 5000000) + 1000000 // Random revenue between 1M - 6M
+                });
+            }
+
+            const sampleOverview = {
+                totalOrders: 156,
+                totalRevenue: 85000000,
+                avgOrderValue: 544871
+            };
+
+            // Update charts with sample data
+            updateFavoriteDishesChart(sampleFavoriteDishes);
+            updateRevenueChart(sampleRevenueData);
+            updateOverviewStats(sampleOverview);
+        }
+
+        // Load sample data for demonstration
+        // Comment out this line when you implement the real API endpoints
+        //setTimeout(() => {
+            //loadSampleData();
+            //showLoading(false);
+        //}, 1000);
+    </script>
+}
+
+<style>
+    .card {
+        border: none;
+        border-radius: 12px;
+    }
+
+    .card-header {
+        border-radius: 12px 12px 0 0 !important;
+        border: none;
+    }
+
+    .shadow-sm {
+        box-shadow: 0 0.125rem 0.75rem rgba(0, 0, 0, 0.1) !important;
+    }
+
+    #loadingOverlay {
+        backdrop-filter: blur(2px);
+    }
+
+    .border-end {
+        border-right: 1px solid #dee2e6 !important;
+    }
+
+    canvas {
+        max-height: 400px;
+    }
+</style>

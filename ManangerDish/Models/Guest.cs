@@ -27,6 +27,9 @@ namespace ManagerDish.Models
         [ForeignKey("OrderId")]
         public virtual Order? Order { get; set; }
 
+        [Required]
+        public string Token { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
         public DateTime CheckInTime { get; set; } = DateTime.Now;
